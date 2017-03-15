@@ -53,7 +53,7 @@
             <Field source="JobName" />
             <Field source="TheYear" />
             <Reference foreignKey="ProjectManagerNumber_Employee" />
-            <Reference foreignKey="LocationName_Location" keyShadowTitle="Name" descriptionShadowTitle="Description" />
+<!--             <Reference foreignKey="LocationName_Location" keyShadowTitle="Name" descriptionShadowTitle="Description" /> -->
             <Reference foreignKey="Specification2Name_Specification2" keyShadowTitle="Name" descriptionShadowTitle="Description" />
             <If condition="TemplateJobNumber = ''">
               <Field source="JobGroup" />
