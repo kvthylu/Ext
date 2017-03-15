@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MDML xmlns="http://www.deltek.com/ns/mdml" version="0.97">
+  <Layout name="jobs_details" source="jobs">
+    <UpperPane>
+      <Define>
+        <Trigger name="CreateKonaSpaceTrigger">
+          <Assign source="NewKonaSpaceNameVar" valueString="^{JobName} (^{JobNumber})" />
+          <Assign source="NewKonaSpaceDescriptionVar" valueString="" />
+        </Trigger>
+      </Define>
+      <Wizard name="CreateJobWizard" title="Create Job">
+        <Page form="CreateJobPage1" title="Select Template Job" />
+        <Page form="CreateJobPage2" title="Job Specific Information" />
+      </Wizard>
+      <Wizard name="CopyJobWizard" title="Copy Job" postTrigger="refresh">
+        <Page form="CopyJobPage1" title="Create new job from existing job." />
+      </Wizard>
+      <Wizard name="CreateKonaSpaceWizard" title="Create Kona Space" description="Enter a name and a description for a new Kona space">
+        <Page form="CreateKonaSpacePage1" title="New Kona Space" preTrigger="CreateKonaSpaceTrigger" />
+      </Wizard>
+      <Form name="CreateJobPage1">
+        <Actions>
+          <Create />
+        </Actions>
+        <Group>
+          <Reference foreignKey="TemplateJobNumber_JobHeader" keySuggestions="onDemand" descriptionSuggestions="onDemand" descriptionSource="TemplateJobNameVar" title="Template" keySearchView="TemplateJobSelection" descriptionSearchView="TemplateJobSelection" />
+        </Group>
+      </Form>
+      <Form name="CreateJobPage2">
+        <Actions>
+          <Create />
+        </Actions>
+        <If condition="TemplateJobNumber != ''">
+          <Row>
+            <Group>
+              <Reference foreignKey="TemplateJobNumber_JobHeader" descriptionSource="TemplateJobNameVar" title="Template Job" open="false" size="huge" />
+              <Field source="TemplateJobCustomerNumberVar" title="Template Job Customer" open="false" />
+            </Group>
+          </Row>
+        </If>
+        <Row>
+          <Group>
+            <If condition="TemplateJobNumber = '' or TemplateJobCustomerNumberVar = ''">
+              <Reference foreignKey="CustomerNumber_Customer" keyMandatory="true" descriptionSource="Name1" />
+            </If>
+            <ElseIf condition="not TemplateJobInternalJobVar">
+              <Reference foreignKey="CustomerNumber_Customer" descriptionSource="Name1" />
+            </ElseIf>
+            <Reference foreignKey="CompanyNumber_CompanyInformation" keySource="CompanyNumber" />
+            <If condition="isEnvVarDefined('solutionconfiguration.ShowJobNumberWithJobName') and booleanEnvVar('solutionconfiguration.ShowJobNumberWithJobName')">
+              <Field source="JobNumber" shadowTitle="Blank for default job no." size="large" />
+            </If>
+            <Field source="JobName" />
+            <Field source="TheYear" />
+            <Reference foreignKey="ProjectManagerNumber_Employee" />
+            <Reference foreignKey="LocationName_Location" keyShadowTitle="Name" descriptionShadowTitle="Description" />
+            <Reference foreignKey="Specification2Name_Specification2" keyShadowTitle="Name" descriptionShadowTitle="Description" />
+            <If condition="TemplateJobNumber = ''">
+              <Field source="JobGroup" />
+              <Field source="JobInvoiceableVar" />
+              <If condition="hasAddOn(128)">
+                <Boolean source="TransferToPeoplePlanner" />
+              </If>
+            </If>
+            <Boolean source="RecurringAnnually" />
+          </Group>
+        </Row>
+      </Form>
+      <Form name="CopyJobPage1">
+        <Actions>
+          <Update />
+        </Actions>
+        <Row>
+          <Group>
+            <Reference foreignKey="JobNumber_JobHeader" title="Copy from" open="false" />
+            <BooleanGroup title="Include">
+              <Boolean source="IncludeTextsVar" title="Budget Texts" />
+              <Boolean source="IncludeItemLinesVar" title="Item Lines" />
+            </BooleanGroup>
+          </Group>
+        </Row>
+        <Row>
+          <Group>
+            <Field source="NewJobNumberVar" shadowTitle="Blank for default job no." />
+          </Group>
+        </Row>
+      </Form>
+      <Form name="CreateKonaSpacePage1">
+        <Actions>
+          <Update />
+        </Actions>
+        <Group>
+          <Field source="NewKonaSpaceNameVar" title="Name" mandatory="true" size="huge" />
+        </Group>
+        <Group title="Description">
+          <Field source="NewKonaSpaceDescriptionVar" appearance="maximized" />
+        </Group>
+      </Form>
+      <Form name="JobHome_Information">
+        <Actions all="true">
+          <Exclude>
+            <Create />
+            <Action source="CopyJob" />
+          </Exclude>
+          <Delete appearance="standard" />
+          <If condition="maconomy:booleanSysPar('EnableKonaIntegration', CompanyNumber)">
+            <Action source="CreateKonaSpace" loginRules="'Kona'" wizard="CreateKonaSpaceWizard">
+              <Argument parameter="Name" value="result.NewKonaSpaceNameVar" />
+              <Argument parameter="Details" value="result.NewKonaSpaceDescriptionVar" />
+            </Action>
+          </If>
+        </Actions>
+        <Column>
+          <Group title="Job Reporting">
+            <Reference foreignKey="JobNumber_JobHeader" />
+            <Reference foreignKey="CustomerNumber_Customer" keySource="CustomerNumber" descriptionSource="Name1" />
+            <Link workspace="Customers" template="Customer details..." title="" icon="WorkspaceLink">
+              <Style anchor="both" />
+              <Target pane="Customers_Filter">
+                <Restriction template="Selected Customer" expression="CustomerNumber=target.CustomerNumber" />
+                <Focus>
+                  <Match value="CustomerNumber" field="CustomerNumber" />
+                </Focus>
+              </Target>
+            </Link>
+            <If condition="OpportunityNumber != ''">
+              <Link workspace="Opportunities" template="Opportunity details..." title="" icon="WorkspaceLink">
+                <Style anchor="both" />
+                <Target pane="Opportunities_Filter">
+                  <Restriction template="Selected Opportunity" expression="OpportunityNumber=target.OpportunityNumber" />
+                  <Focus>
+                    <Match value="OpportunityNumber" field="OpportunityNumber" />
+                  </Focus>
+                </Target>
+              </Link>
+            </If>
+            <Reference foreignKey="CompanyNumber_CompanyInformation" keySource="CompanyNumber" />
+            <Reference foreignKey="LocationName_Location" />
+            <Reference foreignKey="ProjectName_Project" />
+            <Reference foreignKey="Specification1Name_Specification1" />
+            <Reference foreignKey="Specification2Name_Specification2" />
+          </Group>
+          <Group title="Responsible Staff">
+            <Reference foreignKey="SalesPersonNumber_Employee" />
+            <Reference foreignKey="AccountManagerNumber_Employee" />
+            <Reference foreignKey="ProjectManagerNumber_Employee" />
+            <Reference foreignKey="EmployeeNumber6_Employee" />
+            <Reference foreignKey="EmployeeNumber7_Employee" />
+          </Group>
+          <Group title="Previous Change" ref="UserUpdateGroup" />
+        </Column>
+        <Column>
+          <Group title="Registration Details">
+            <Field source="JobGroup" size="medium" />
+            <Field source="TaskList" size="medium" />
+            <Field source="InvoiceLayout" size="medium" />
+            <Field source="DetailedInvoiceLayout" size="medium" />
+            <Field source="JobInvoiceableVar" size="medium" />
+            <Field source="InvoiceTextListName" title="Standard Text" size="medium" />
+            <Field source="Text1" title="PO Number" size="medium" />
+            <Field source="TheYear" size="medium" />
+          </Group>
+          <Group title="Job Fee">
+            <Field source="ContractedBillingPriceForTimeCurrency" title="Contracted Billing Price for Time{JobDetails}" size="medium" />
+            <Field source="BillingPriceTimeCurrencyVar" title="Budgeted Time" size="medium" />
+            <Field source="ApprovedBudgetRealizationRateVar" title="Budgeted Realization %" size="medium" />
+            <Field source="JobRealizationRateToDateVar" title="Invoiced Realization %" size="medium" />
+          </Group>
+        </Column>
+        <Column>
+          <Group title="Service Description">
+            <Range firstSource="StartingDate" lastSource="ExpectedEndingDate" title="Start and Ending" size="small" />
+            <Field source="Description1" appearance="maximized" />
+          </Group>
+          <Group title="Job Restrictions">
+            <BooleanGroup title="Recurring">
+              <Boolean source="RecurringAnnually" title="Roll forward Job" />
+            </BooleanGroup>
+            <BooleanGroup title="Blocked for">
+              <Boolean source="BlockedForTimeRegistrations" title="Time Registrations" />
+              <Boolean source="BlockedForAmountRegistrations" title="Expense Registrations" />
+              <Boolean source="BlockedForBudgeting" title="Budgeting" />
+              <Boolean source="BlockedForInvoicing" title="Billing" />
+            </BooleanGroup>
+            <BooleanGroup title="Billing">
+              <Boolean source="ToBeBlanketInvoiced" />
+            </BooleanGroup>
+            <If condition="hasAddOn(128)">
+              <BooleanGroup title="Resource Planning">
+                <Boolean source="TransferToPeoplePlanner" />
+              </BooleanGroup>
+            </If>
+          </Group>
+          <If condition="maconomy:booleanSysPar('EnableKonaIntegration', CompanyNumber)">
+            <Group ref="KonaGroup" />
+          </If>
+        </Column>
+      </Form>
+    </UpperPane>
+  </Layout>
+</MDML>
