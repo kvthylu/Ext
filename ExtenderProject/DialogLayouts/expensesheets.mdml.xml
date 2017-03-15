@@ -1,0 +1,657 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MDML xmlns="http://www.deltek.com/ns/mdml" version="0.97">
+  <Layout source="ExpenseSheets">
+    <FilterPane>
+      <Define>
+        <Trigger name="refresh">
+          <Refresh type="workspace" />
+        </Trigger>
+      </Define>
+      <Filter name="Standard">
+        <Compact>
+          <Description template="^1 (^2)" arguments="Description;ExpenseSheetNumber" />
+        </Compact>
+        <Columns>
+          <Field source="ExpenseSheetNumber" />
+          <Field source="Description" />
+          <Field source="EmployeeNumber" />
+          <Field source="EmployeeName" />
+          <Field source="CompanyNumber" />
+          <Field source="ExpenseSheetType" />
+          <Field source="CreatedBy" />
+          <Field source="CreatedDate" />
+          <Field source="Submitted" />
+          <Field source="SubmittedBy" />
+          <Field source="VendorSettlementStatus" />
+        </Columns>
+      </Filter>
+      <Filter name="Demo">
+        <Actions>
+          <Action source="with.Create" wizard="NewExpenseSheetWizard" disabled="false" />
+        </Actions>
+        <ControlBar>
+          <Selection default="MyNotFullyApprovedExpenseSheets">
+            <Option name="MyNotFullyApprovedExpenseSheets" title="My Open Expense Sheets" restriction="not FullyApproved and EmployeeNumber = UserEmployeeNumber()" />
+            <Option name="MyExpenseSheets" title="All My Expense Sheets" restriction="EmployeeNumber = UserEmployeeNumber()" />
+            <Option name="NotFullyApprovedExpenseSheets" title="Open Expense Sheets" restriction="not FullyApproved" />
+            <Option name="ExpenseSheets" title="All Expense Sheets" />
+          </Selection>
+        </ControlBar>
+        <Compact>
+          <Description template="^1 (^2) ^3" arguments="Description;ExpenseSheetNumber;EmployeeName" />
+        </Compact>
+        <Columns>
+          <OrderBy source="ExpenseSheetNumber" order="descending" />
+          <Link title="Duplicate" template="Copy" action="with.DuplicateExpenseSheet" size="small" preTrigger="refresh" disabled="false" />
+          <Field source="ExpenseSheetNumber" />
+          <Field source="Description" />
+          <Field source="EmployeeNumber" />
+          <Field source="EmployeeName" />
+          <Field source="AmountBase" title="Total Amount" size="small" />
+          <Field source="CreatedDate" title="Created" />
+          <Field source="DateSubmitted" title="Submitted" />
+          <Field source="ApprovalDate" title="Approved" />
+          <Field source="FullyApproved" />
+          <Field source="VendorSettlementStatus" />
+        </Columns>
+      </Filter>
+      <Filter name="ApproveExpenseSheets">
+        <ControlBar>
+          <Selection default="EmployeesUnapprovedExpenseSheets">
+            <Option title="Employees Unapproved Expense Sheets" name="EmployeesUnapprovedExpenseSheets" restriction="Submitted = true and UserEmployeeNumber() != '' and UserEmployeeNumber() = SuperiorEmployee and Approved = false" />
+            <Option title="All Expense Sheets Approvable by Me" name="AllApprovableExpenseSheets" restriction="             Submitted = true             and Approved = false             and (booleanEnvVar('user.info.CanSeeAllExpenseSheets') = true               or (SuperiorEmployee = UserEmployeeNumber() and SuperiorEmployee != '')               or (SecretaryEmployee = UserEmployeeNumber() and SecretaryEmployee != '')               or (TutorEmployee = UserEmployeeNumber() and TutorEmployee != '')              )" />
+            <!-- Avoid users own sheets which he has access to in dialog -->
+            <Option title="All Expense Sheets" name="AllExpenseSheets" />
+          </Selection>
+        </ControlBar>
+        <Compact>
+          <Description template="^1, ^2 (^3)" arguments="EmployeeName;AmountBase;Description" />
+        </Compact>
+        <Columns>
+          <Field source="EmployeeNumber" />
+          <Field source="EmployeeName" />
+          <Field source="Description" />
+          <Field source="AmountBase" />
+          <Field source="Approved" />
+          <Field source="ApprovedBy" />
+          <Field source="ApprovalDate" />
+          <Field source="SuperiorEmployee" />
+          <Field source="SecretaryEmployee" />
+          <Field source="TutorEmployee" />
+        </Columns>
+      </Filter>
+    </FilterPane>
+    <UpperPane>
+      <Wizard name="NewExpenseSheetWizard" title="Create Expense Sheet">
+        <Page form="NewExpenseSheetWizardForm" title="Expense Sheet" description="A new expense sheet will be created" />
+      </Wizard>
+      <Wizard name="CopyExpenseSheet" title="Copy Expense Sheet" description="Enter the number of the expense sheet to copy from">
+        <Page form="CopyExpenseSheetWizard" title="Copy Expense Sheet" />
+      </Wizard>
+      <Form name="Full">
+        <Actions all="true" />
+        <Row>
+          <Column>
+            <Group title="Expense Sheet{0}">
+              <Reference keySource="ExpenseSheetNumber" descriptionSource="Description" descriptionShadowTitle="Description" title="Expense Sheet" />
+            </Group>
+            <Group title="Employee Information">
+              <Reference foreignKey="ExpenseSheetEmployeeNumber_Employee" descriptionSource="EmployeeName" />
+            </Group>
+            <Group title="Status">
+              <Field source="CreatedBy" />
+              <Field source="CreatedDate" title="Date" />
+              <Field source="Submitted" />
+              <Field source="SubmittedBy" />
+              <Field source="DateSubmitted" title="Date" />
+              <Field source="Transferred" />
+              <Field source="TransferredBy" />
+              <Field source="TransferDate" title="Date" />
+              <Field source="Approved" />
+              <Field source="ApprovedBy" />
+              <Field source="ApprovalDate" title="Date" />
+              <Field source="VendorSettlementStatusVar" />
+              <Field source="Reopened" />
+              <Field source="ExpenseSheetHeaderStatusVar" />
+            </Group>
+            <Group title="Job">
+              <Reference foreignKey="JobNumber_JobHeader" />
+            </Group>
+            <Group title="Copy Expense Sheet{1}">
+              <Field source="CopyFromExpenseSheetNumber" title="Expense Sheet No." />
+            </Group>
+            <Group title="Mentor">
+              <Reference foreignKey="TutorEmployee_Employee" />
+            </Group>
+            <Group title="Note">
+              <Reference foreignKey="NoteNumber_NoteHeader" />
+            </Group>
+          </Column>
+          <Column>
+            <Group title="Approval">
+              <Field source="ApprovalRemarkVar" title="Remarks{sg}" />
+            </Group>
+            <Group title="Company">
+              <Reference foreignKey="CompanyNumber_CompanyInformation" />
+              <Field source="BaseCurrencyVar" title="Base Currency" />
+            </Group>
+            <Group title="Total{1}">
+              <Field source="TotalVATBaseVar" title="Tax, Base" />
+              <Field source="AmountBase" />
+            </Group>
+            <Group title="Exchange Rate{1}">
+              <Field source="Currency" />
+              <Field source="ExchangeRate" />
+            </Group>
+            <Group title="Transaction">
+              <Field source="DefaultTransactionType" title="Transaction Type" />
+            </Group>
+            <Group title="Period">
+              <Interval firstSource="FromDate" lastSource="ToDate" title="Date" />
+            </Group>
+            <Group title="Supervisor">
+              <Reference foreignKey="SuperiorEmployee_Employee" />
+            </Group>
+            <Group title="Secretary">
+              <Reference foreignKey="SecretaryEmployee_Employee" />
+            </Group>
+            <Group title="Document Archive">
+              <Reference foreignKey="DocumentArchiveNumber_DocumentArchiveHeader" />
+              <Field source="RemovedDocumentNameVar" title="Deleted Document Name" />
+            </Group>
+          </Column>
+        </Row>
+        <Row>
+          <Group title="Remarks{pl}">
+            <Field source="Remark1" appearance="maximized" />
+            <Field source="Remark2" appearance="maximized" />
+            <Field source="Remark3" appearance="maximized" />
+          </Group>
+        </Row>
+      </Form>
+      <Form name="NewExpenseSheetWizardForm">
+        <Actions all="true" />
+        <Column>
+          <Group title="Expense Sheet{0}">
+            <Field source="EmployeeNumber" />
+            <Field source="Description" />
+            <Reference foreignKey="JobNumber_JobHeader" keySource="JobNumber" title="Job" />
+          </Group>
+          <Group title="Exchange Rate{1}">
+            <Field source="Currency" />
+            <Field source="ExchangeRate" />
+          </Group>
+        </Column>
+      </Form>
+      <Form name="CopyExpenseSheetWizard">
+        <Actions all="true" />
+        <Group>
+          <Field source="CopyFromExpenseSheetNumber" title="Expense Sheet Number" />
+        </Group>
+      </Form>
+      <Form name="Demo">
+        <Parameters>
+          <Parameter name="ReadWritePar" type="boolean" />
+          <Parameter name="inEntryOriginContextPar" type="boolean" />
+        </Parameters>
+        <Actions>
+          <If condition="ReadWritePar">
+            <Action source="SubmitExpenseSheet" title="Submit" />
+            <Action source="ReopenExpenseSheet" title="Reopen" />
+            <Action source="CopyExpenseSheet" title="Copy" wizard="CopyExpenseSheet" />
+            <Create wizard="NewExpenseSheetWizard" />
+            <Update />
+            <Delete />
+          </If>
+          <Print />
+          <PrintThis />
+        </Actions>
+        <Column>
+          <Group title="Expense Sheet">
+            <Reference keySource="ExpenseSheetNumber" descriptionSource="Description" title="Expense Sheet" />
+            <Reference keySource="JobNumber" descriptionSource="JobName" title="Job" />
+            <Reference keySource="EmployeeNumber" descriptionSource="EmployeeName" title="Employee" />
+            <UnitField source="AmountBase" unitSource="BaseCurrencyVar" title="Total Amount" />
+          </Group>
+          <If condition="inEntryOriginContextPar">
+            <Group title="Related Employees">
+              <Reference keySource="SuperiorEmployee" descriptionSource="SuperiorEmployeeNameVar" title="Supervisor" />
+              <Reference keySource="TutorEmployee" descriptionSource="TutorEmployeeNameVar" title="Mentor" />
+              <Reference keySource="SecretaryEmployee" descriptionSource="SecretaryEmployeeNameVar" title="Secretary" />
+            </Group>
+          </If>
+        </Column>
+        <Column>
+          <Group title="Period">
+            <Range firstSource="FromDate" lastSource="ToDate" title="Period" />
+          </Group>
+          <Group title="Status">
+            <If condition="inEntryOriginContextPar">
+              <Reference keySource="CreatedDate" descriptionSource="CreatedBy" title="Created" />
+            </If>
+            <Reference keySource="DateSubmitted" descriptionSource="SubmittedBy" title="Submitted" />
+            <Reference keySource="ApprovalDate" descriptionSource="ApprovedBy" title="Approved" />
+            <Field source="VendorSettlementStatusVar" />
+            <If condition="inEntryOriginContextPar">
+              <Reference keySource="TransferDate" descriptionSource="TransferredBy" title="Transferred" />
+              <Field source="Reopened" />
+            </If>
+          </Group>
+          <If condition="inEntryOriginContextPar">
+            <Group title="Company">
+              <Reference keySource="CompanyNumber" descriptionSource="CompanyName1Var" title="Company" />
+            </Group>
+            <Group title="Document Archive">
+              <Reference keySource="DocumentArchiveNumber" descriptionSource="DocumentArchiveDescriptionVar" title="Archive" />
+            </Group>
+          </If>
+        </Column>
+        <Column>
+          <Group title="Exchange Rate{1}">
+            <Field source="Currency" size="small" />
+            <Field source="ExchangeRate" size="small" />
+          </Group>
+        </Column>
+      </Form>
+      <Form name="ApproveExpenseSheets">
+        <Actions>
+          <Action source="ReopenExpenseSheet" />
+          <Action source="ApproveExpenseSheet" />
+          <Action source="ReleaseExpenseSheet" />
+          <Action source="PrintThis" />
+          <Action source="Print" />
+          <Action source="HeaderApproval_ApprovalHeader->ApprovalObjects.RejectAll" title="Reject" wizard="RejectWizard" icon="Reject" disabled="not HeaderCanBeApprovedByCurrentUserVar" />
+        </Actions>
+        <Row>
+          <Column>
+            <Group title="Expense Sheet{0}">
+              <Reference keySource="ExpenseSheetNumber" descriptionSource="Description" descriptionShadowTitle="Description" title="Expense Sheet" />
+            </Group>
+            <Group title="Employee Information">
+              <Reference foreignKey="ExpenseSheetEmployeeNumber_Employee" descriptionSource="EmployeeName" />
+            </Group>
+            <Group title="Status">
+              <Field source="CreatedBy" />
+              <Field source="CreatedDate" title="Date" />
+              <Field source="Submitted" />
+              <Field source="SubmittedBy" />
+              <Field source="DateSubmitted" title="Date" />
+              <Field source="Transferred" />
+              <Field source="TransferredBy" />
+              <Field source="TransferDate" title="Date" />
+              <Field source="Approved" />
+              <Field source="ApprovedBy" />
+              <Field source="ApprovalDate" title="Date" />
+              <Field source="Reopened" />
+            </Group>
+            <Group title="Job">
+              <Reference foreignKey="JobNumber_JobHeader" />
+            </Group>
+            <Group title="Copy Expense Sheet{1}">
+              <Field source="CopyFromExpenseSheetNumber" title="Expense Sheet No." />
+            </Group>
+            <Group title="Mentor">
+              <Reference foreignKey="TutorEmployee_Employee" />
+            </Group>
+            <Group title="Note">
+              <Reference foreignKey="NoteNumber_NoteHeader" />
+            </Group>
+          </Column>
+          <Column>
+            <Group title="Approval">
+              <Field source="ApprovalRemarkVar" title="Remarks{sg}" />
+            </Group>
+            <Group title="Company">
+              <Reference foreignKey="CompanyNumber_CompanyInformation" />
+              <Field source="BaseCurrencyVar" title="Base Currency" />
+            </Group>
+            <Group title="Total{1}">
+              <Field source="TotalVATBaseVar" title="Tax, Base" />
+              <Field source="AmountBase" />
+            </Group>
+            <Group title="Exchange Rate{1}">
+              <Field source="Currency" />
+              <Field source="ExchangeRate" />
+            </Group>
+            <Group title="Transaction">
+              <Field source="DefaultTransactionType" title="Transaction Type" />
+            </Group>
+            <Group title="Period">
+              <Interval firstSource="FromDate" lastSource="ToDate" title="Date" />
+            </Group>
+            <Group title="Supervisor">
+              <Reference foreignKey="SuperiorEmployee_Employee" />
+            </Group>
+            <Group title="Secretary">
+              <Reference foreignKey="SecretaryEmployee_Employee" />
+            </Group>
+            <Group title="Document Archive">
+              <Reference foreignKey="DocumentArchiveNumber_DocumentArchiveHeader" />
+            </Group>
+          </Column>
+        </Row>
+        <Row>
+          <Group title="Remarks{pl}">
+            <Field source="Remark1" appearance="maximized" />
+            <Field source="Remark2" appearance="maximized" />
+            <Field source="Remark3" appearance="maximized" />
+          </Group>
+        </Row>
+      </Form>
+    </UpperPane>
+    <LowerPane>
+      <Define>
+        <Include fragment="GD_Dimensions" />
+        <Style name="MissingJob" ref="attentionField" condition="LineDetailsTypeVar = LineDetailsTypeType'Job" />
+        <Style name="MissingTask" ref="attentionField" condition="LineDetailsTypeVar = LineDetailsTypeType'Task" />
+        <Style name="MissingExpenseJustification" ref="attentionField" condition="LineDetailsTypeVar = LineDetailsTypeType'\Expense justification\" />
+        <Style name="LineNotOK" ref="attentionField" condition="LineDetailsTypeVar != LineDetailsTypeType'OK" />
+        <Style name="MissingJustification" ref="attentionField" condition="JustificationCompleteVar = false" />
+        <Style name="hours" zeroSuppression="true" size="tiny" />
+      </Define>
+      <Table name="Full">
+        <Actions all="true" />
+        <Columns>
+          <Field source="EntryDate" title="Entry Date{abbr}" />
+          <Field source="Favorite" searchView="FilterFollowEntryDate" />
+          <Field source="JobNumber" />
+          <Field source="ActivityNumber" title="Act. No." />
+          <Field source="TransactionType" />
+          <Field source="Text" />
+          <Field source="NumberOf" />
+          <Field source="UnitPriceCurrency" />
+          <Field source="AmountCurrency" />
+          <If condition="booleanSysPar('UseMultipleVATLevels')">
+            <Field source="FinanceVATCode" name="UseMultipleVATLevels_FinanceVATCode" />
+            <Field source="FinanceVATCode2" />
+            <If condition="booleanSysPar('ShowThreeVATLevels')">
+              <Field source="FinanceVATCode3" />
+            </If>
+            <Field source="VATCurrency" title="Tax Total, Currency" name="UseMultipleVATLevels_VATCurrency" />
+            <Field source="VAT1Currency" />
+            <Field source="VAT2Currency" />
+            <If condition="booleanSysPar('ShowThreeVATLevels')">
+              <Field source="VAT3Currency" />
+            </If>
+          </If>
+          <Else>
+            <Field source="FinanceVATCode" title="Tax Code" name="NotUseMultipleVATLevels_FinanceVATCode" />
+            <Field source="VATCurrency" name="NotUseMultipleVATLevels_VATCurrency" />
+          </Else>
+          <Field source="Currency" />
+          <Field source="ExchangeRate" />
+          <Field source="TaskName" />
+          <Columns ref="DimensionColumns" />
+          <Field source="ApprovalStatus" />
+          <Field source="ApprovedOrRejectedBy" />
+          <Field source="ApprovalDate" />
+          <Field source="CommentProjectManager" />
+          <Field source="JobNameVar" title="Job Name" />
+          <Field source="ActivityTextVar" title="Activity Name" />
+          <Field source="TaskNameVar" title="Task Description{1}" />
+          <Field source="TaskPathVar" title="Task Path" />
+          <Field source="UnitPriceBase" />
+          <Field source="AmountBase" />
+          <If condition="booleanSysPar('UseMultipleVATLevels')">
+            <Field source="VATBase" title="Tax Total, Base" name="UseMultipleVATlevels_VATBase" />
+            <Field source="VAT1Base" />
+            <Field source="VAT2Base" />
+            <If condition="booleanSysPar('ShowThreeVATLevels')">
+              <Field source="VAT3Base" />
+            </If>
+          </If>
+          <Else>
+            <Field source="VATBase" name="NotUseMultipleVATLevels_VATBase" />
+          </Else>
+          <Field source="Reference" />
+          <Field source="StartingDate" />
+          <Field source="StartingTime" />
+          <Field source="EndingDate" />
+          <Field source="ClosingTime" />
+          <Field source="Invoiceable" />
+          <Field source="ExpenseJustificationHelpTextVar" />
+          <Field source="ExpenseJustification" />
+          <Field source="Remark1" />
+          <Field source="Remark2" />
+          <Field source="Remark3" />
+          <Field source="QuantityA" />
+          <Field source="QuantityB" />
+          <Field source="DocumentName" />
+          <Field source="CustomerNumberVar" title="Customer No." />
+          <Field source="CustomerNameVar" title="Customer Name" />
+          <If condition="maconomy:booleanSysPar('UseCustomerLevel2')">
+            <Field source="Level1CustomerNameVar" title="^{parent.Level1TitleNameVar}" />
+            <Field source="Level2CustomerNameVar" title="^{parent.Level2TitleNameVar}" />
+            <If condition="maconomy:booleanSysPar('UseCustomerLevel3')">
+              <Field source="Level3CustomerNameVar" title="^{parent.Level3TitleNameVar}" />
+              <If condition="maconomy:booleanSysPar('UseCustomerLevel4')">
+                <Field source="Level4CustomerNameVar" title="^{parent.Level4TitleNameVar}" />
+                <If condition="maconomy:booleanSysPar('UseCustomerLevel5')">
+                  <Field source="Level5CustomerNameVar" title="^{parent.Level5TitleNameVar}" />
+                </If>
+              </If>
+            </If>
+          </If>
+          <Field source="LanguageVar" title="Language" />
+          <Field source="LineDetailsVar" title="Details" />
+          <If condition="parent.EmployeeSubcontractorNumberVar != ''">
+            <Field source="PurchaseOrderNumber" searchView="ExpenseSheet" />
+            <Field source="PurchaseOrderLineNumber" searchView="ExpenseSheet" />
+          </If>
+        </Columns>
+      </Table>
+      <Table name="Demo">
+        <Parameters>
+          <Parameter name="ReadWritePar" type="boolean" />
+          <Parameter name="inEntryOriginContextPar" type="boolean" />
+        </Parameters>
+        <Actions all="ReadWritePar">
+          <Print />
+          <PrintThis />
+          <Action source="ShowDocument" />
+        </Actions>
+        <Columns>
+          <Style ref="highlightRow" condition="inEntryOriginContextPar and InstanceKey=Parent.Parent.OriginLineInstanceKey" />
+          <Field source="EntryDate" size="small" />
+          <Field source="Favorite" searchView="FilterFollowEntryDate" />
+          <If condition="isSolutionPropertyEnabled('ShowJobNumberWithJobName')">
+            <Field source="JobNumber" style="MissingJob" />
+          </If>
+          <Field source="JobNameVar" title="Job Name" style="MissingJob" />
+          <Field source="CustomerNameVar" title="Customer Name" />
+          <Field source="TaskNameVar" style="MissingTask" />
+          <Field source="Text" open="JustificationRequiredVar = false" style="MissingJustification" />
+          <Field source="ExpenseJustification" style="MissingExpenseJustification" />
+          <Field source="Reference" size="tiny" />
+          <Field source="NumberOf" size="tiny" />
+          <UnitField source="UnitPriceCurrency" unitSource="Currency" size="small" />
+          <UnitField source="AmountCurrency" unitSource="Currency" size="small" />
+          <Field source="Currency" size="tiny" />
+          <Field source="ExchangeRate" size="tiny" />
+          <If condition="booleanSysPar('UseMultipleVATLevels')">
+            <Field source="FinanceVATCode" name="UseMultipleVATLevels_FinanceVATCode" />
+            <Field source="FinanceVATCode2" />
+            <If condition="booleanSysPar('ShowThreeVATLevels')">
+              <Field source="FinanceVATCode3" />
+            </If>
+            <UnitField source="VATCurrency" unitSource="Currency" title="Tax Total, Currency" size="small" name="UseMultipleVATLevels_VATCurrency" />
+            <UnitField source="VAT1Currency" unitSource="Currency" size="small" />
+            <UnitField source="VAT2Currency" unitSource="Currency" size="small" />
+            <If condition="booleanSysPar('ShowThreeVATLevels')">
+              <UnitField source="VAT3Currency" unitSource="Currency" size="small" />
+            </If>
+          </If>
+          <Else>
+            <Field source="FinanceVATCode" title="Tax Code" name="NotUseMultipleVATLevels_FinanceVATCode" />
+            <UnitField source="VATCurrency" unitSource="Currency" size="small" name="NotUseMultipleVATLevels_VATCurrency" />
+          </Else>
+          <If condition="parent.EmployeeSubcontractorNumberVar != ''">
+            <Field source="PurchaseOrderNumber" searchView="ExpenseSheet" />
+            <Field source="PurchaseOrderLineNumber" searchView="ExpenseSheet" />
+          </If>
+        </Columns>
+      </Table>
+      <Table name="ApproveExpenseSheets">
+        <Actions>
+          <Action source="ShowDocument" />
+        </Actions>
+        <Columns>
+          <Field source="EntryDate" title="Entry Date{abbr}" />
+          <Field source="Favorite" searchView="FilterFollowEntryDate" />
+          <Field source="JobNumber" />
+          <Field source="ActivityNumber" title="Act. No." />
+          <Field source="TransactionType" />
+          <Field source="Text" />
+          <Field source="NumberOf" />
+          <Field source="UnitPriceCurrency" />
+          <Field source="AmountCurrency" />
+          <If condition="booleanSysPar('UseMultipleVATLevels')">
+            <Field source="FinanceVATCode" name="UseMultipleVATLevels_FinanceVATCode" />
+            <Field source="FinanceVATCode2" />
+            <If condition="booleanSysPar('ShowThreeVATLevels')">
+              <Field source="FinanceVATCode3" />
+            </If>
+            <Field source="VATCurrency" title="Tax Total, Currency" name="UseMultipleVATLevels_VATCurrency" />
+            <Field source="VAT1Currency" />
+            <Field source="VAT2Currency" />
+            <If condition="booleanSysPar('ShowThreeVATLevels')">
+              <Field source="VAT3Currency" />
+            </If>
+          </If>
+          <Else>
+            <Field source="FinanceVATCode" title="Tax Code" name="NotUseMultipleVATLevels_FinanceVATCode" />
+            <Field source="VATCurrency" name="NotUseMultipleVATLevels_VATCurrency" />
+          </Else>
+          <Field source="Currency" />
+          <Field source="ExchangeRate" />
+          <Field source="TaskName" />
+          <Columns ref="DimensionColumns" />
+          <Field source="ApprovalStatus" />
+          <Field source="ApprovedOrRejectedBy" />
+          <Field source="ApprovalDate" />
+          <Field source="CommentProjectManager" />
+          <Field source="JobNameVar" title="Job Name" />
+          <Field source="ActivityTextVar" title="Activity Name" />
+          <Field source="TaskNameVar" title="Task Description{1}" />
+          <Field source="TaskPathVar" title="Task Path" />
+          <Field source="UnitPriceBase" />
+          <Field source="AmountBase" />
+          <If condition="booleanSysPar('UseMultipleVATLevels')">
+            <Field source="VATBase" title="Tax Total, Base" name="UseMultipleVATlevels_VATBase" />
+            <Field source="VAT1Base" />
+            <Field source="VAT2Base" />
+            <If condition="booleanSysPar('ShowThreeVATLevels')">
+              <Field source="VAT3Base" />
+            </If>
+          </If>
+          <Else>
+            <Field source="VATBase" name="NotUseMultipleVATLevels_VATBase" />
+          </Else>
+          <Field source="Reference" />
+          <Field source="StartingDate" />
+          <Field source="StartingTime" />
+          <Field source="EndingDate" />
+          <Field source="ClosingTime" />
+          <Field source="Invoiceable" />
+          <Field source="ExpenseJustificationHelpTextVar" />
+          <Field source="ExpenseJustification" />
+          <Field source="Remark1" />
+          <Field source="Remark2" />
+          <Field source="Remark3" />
+          <Field source="QuantityA" />
+          <Field source="QuantityB" />
+          <Field source="DocumentName" />
+          <Field source="CustomerNumberVar" title="Customer No." />
+          <Field source="CustomerNameVar" title="Customer Name" />
+          <Field source="LanguageVar" title="Language" />
+          <Field source="LineDetailsVar" title="Details" />
+          <If condition="parent.EmployeeSubcontractorNumberVar != ''">
+            <Field source="PurchaseOrderNumber" searchView="ExpenseSheet" />
+            <Field source="PurchaseOrderLineNumber" searchView="ExpenseSheet" />
+          </If>
+        </Columns>
+      </Table>
+      <Table name="ApprovalsHighlightRow">
+        <Actions>
+          <Action source="ShowDocument" />
+        </Actions>
+        <Columns>
+          <Style ref="highlightRow" condition="InstanceKey=Parent.Parent.Parent.ApprovalRelationInstanceKey" />
+          <Field source="EntryDate" title="Entry Date{abbr}" />
+          <Field source="Favorite" searchView="FilterFollowEntryDate" />
+          <Field source="JobNumber" />
+          <Field source="ActivityNumber" title="Act. No." />
+          <Field source="TransactionType" />
+          <Field source="Text" />
+          <Field source="NumberOf" />
+          <Field source="UnitPriceCurrency" />
+          <Field source="AmountCurrency" />
+          <If condition="booleanSysPar('UseMultipleVATLevels')">
+            <Field source="FinanceVATCode" name="UseMultipleVATLevels_FinanceVATCode" />
+            <Field source="FinanceVATCode2" />
+            <If condition="booleanSysPar('ShowThreeVATLevels')">
+              <Field source="FinanceVATCode3" />
+            </If>
+            <Field source="VATCurrency" title="Tax Total, Currency" name="UseMultipleVATLevels_VATCurrency" />
+            <Field source="VAT1Currency" />
+            <Field source="VAT2Currency" />
+            <If condition="booleanSysPar('ShowThreeVATLevels')">
+              <Field source="VAT3Currency" />
+            </If>
+          </If>
+          <Else>
+            <Field source="FinanceVATCode" title="Tax Code" name="NotUseMultipleVATLevels_FinanceVATCode" />
+            <Field source="VATCurrency" name="NotUseMultipleVATLevels_VATCurrency" />
+          </Else>
+          <Field source="Currency" />
+          <Field source="ExchangeRate" />
+          <Field source="TaskName" />
+          <Columns ref="DimensionColumns" />
+          <Field source="ApprovalStatus" />
+          <Field source="ApprovedOrRejectedBy" />
+          <Field source="ApprovalDate" />
+          <Field source="CommentProjectManager" />
+          <Field source="JobNameVar" title="Job Name" />
+          <Field source="ActivityTextVar" title="Activity Name" />
+          <Field source="TaskNameVar" title="Task Description{1}" />
+          <Field source="TaskPathVar" title="Task Path" />
+          <Field source="UnitPriceBase" />
+          <Field source="AmountBase" />
+          <If condition="booleanSysPar('UseMultipleVATLevels')">
+            <Field source="VATBase" title="Tax Total, Base" name="UseMultipleVATlevels_VATBase" />
+            <Field source="VAT1Base" />
+            <Field source="VAT2Base" />
+            <If condition="booleanSysPar('ShowThreeVATLevels')">
+              <Field source="VAT3Base" />
+            </If>
+          </If>
+          <Else>
+            <Field source="VATBase" name="NotUseMultipleVATLevels_VATBase" />
+          </Else>
+          <Field source="Reference" />
+          <Field source="StartingDate" />
+          <Field source="StartingTime" />
+          <Field source="EndingDate" />
+          <Field source="ClosingTime" />
+          <Field source="Invoiceable" />
+          <Field source="ExpenseJustificationHelpTextVar" />
+          <Field source="ExpenseJustification" />
+          <Field source="Remark1" />
+          <Field source="Remark2" />
+          <Field source="Remark3" />
+          <Field source="QuantityA" />
+          <Field source="QuantityB" />
+          <Field source="DocumentName" />
+          <Field source="CustomerNumberVar" title="Customer No." />
+          <Field source="CustomerNameVar" title="Customer Name" />
+          <Field source="LanguageVar" title="Language" />
+          <Field source="LineDetailsVar" title="Details" />
+          <If condition="parent.EmployeeSubcontractorNumberVar != ''">
+            <Field source="PurchaseOrderNumber" searchView="ExpenseSheet" />
+            <Field source="PurchaseOrderLineNumber" searchView="ExpenseSheet" />
+          </If>
+        </Columns>
+      </Table>
+    </LowerPane>
+  </Layout>
+</MDML>
