@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MDML xmlns="http://www.deltek.com/ns/mdml" version="0.97">
+  <Layout source="JobInvoicing">
+    <UpperPane>
+      <Define>
+        <Include fragment="GD_Dimensions" />
+      </Define>
+      <Form name="Full">
+        <Actions all="true" />
+        <Column>
+          <Group title="Selection Criteria">
+            <Boolean source="ShowLinesVar" title="Show Lines" />
+            <Interval firstSource="FromJobNumber" lastSource="ToJobNumber" title="Job No." />
+            <Field source="JobCollectionNumber" title="Job Collection No." appearance="interval" />
+            <Field source="JobGroup" title="Job Group" appearance="interval" />
+            <Interval firstSource="FromCompanyNumber" lastSource="ToCompanyNumber" title="Company No." />
+            <Interval firstSource="FromCustomerNumber" lastSource="ToCustomerNumber" title="Customer No." />
+            <Field source="Telex" title="Telex" appearance="interval" />
+            <Interval firstSource="FromPaymentCustomer" lastSource="ToPaymentCustomer" title="Bill to Customer{No.}" />
+            <Field source="DepartmentNumber" title="Department" appearance="interval" />
+            <Field source="Language" title="Language" appearance="interval" />
+            <Field source="Responsible" title="Responsible" appearance="interval" />
+            <Interval firstSource="SalesPerson" lastSource="SalesPersonNameVar" title="Sales Rep." separator=" " />
+            <Interval firstSource="ProjectManager" lastSource="ProjectManagerNameVar" title="Project Manager" separator=" " />
+            <Field source="Popup1" title="Popup1{Job Popup}" appearance="interval" />
+            <Field source="Popup2" title="Popup2{Job Popup}" appearance="interval" />
+            <Field source="Popup3" title="Popup3{Job Popup}" appearance="interval" />
+            <Field source="Popup4" title="Popup4{Job Popup}" appearance="interval" />
+            <Field source="Popup5" title="Popup5{Job Popup}" appearance="interval" />
+            <Field source="CustomerPopup1" title="Customer Popup 1" appearance="interval" />
+            <Field source="CustomerPopup2" title="Customer Popup 2" appearance="interval" />
+            <Field source="CustomerPopup3" title="Customer Popup 3" appearance="interval" />
+            <Field source="CustomerPopup4" title="Customer Popup 4" appearance="interval" />
+            <Field source="CustomerPopup5" title="Invoice Delivery Method" appearance="interval" />
+            <Field source="EmployeeNumber1" title="Employee No. 1" appearance="interval" />
+            <Field source="EmployeeNumber2" title="Employee No. 2" appearance="interval" />
+            <Field source="EmployeeNumber3" title="Employee No. 3" appearance="interval" />
+            <Field source="EmployeeNumber4" title="Employee No. 4" appearance="interval" />
+            <Field source="EmployeeNumber5" title="Employee No. 5" appearance="interval" />
+            <Field source="EmployeeNumber6" title="Employee No. 6" appearance="interval" />
+            <Field source="EmployeeNumber7" title="Employee No. 7" appearance="interval" />
+            <Field source="EmployeeNumber8" title="Employee No. 8" appearance="interval" />
+            <Field source="EmployeeNumber9" title="Employee No. 9" appearance="interval" />
+            <Field source="EmployeeNumber10" title="Employee No. 10" appearance="interval" />
+          </Group>
+        </Column>
+        <Column>
+          <Group ref="DimensionsTargetGroupJobIntervals" title="Selection Criteria, Dimensions" />
+          <Group title="Invoicing" style="compact_textAlignment">
+            <Field source="NumberOfDraftsVar" title="Number of Drafts" />
+            <Field source="AmountForInvoicingVar" title="Amount for Invoicing" />
+          </Group>
+          <Group title="Transfer Invoice Dates">
+            <Field source="DefaultInvoiceDateVar" title="Invoice Date" />
+          </Group>
+          <Group title="Print Control">
+            <Field source="LayoutName" title="Layout" />
+          </Group>
+        </Column>
+      </Form>
+    </UpperPane>
+    <LowerPane>
+      <Define>
+        <Function name="IsWrittenUp" value="BillingPriceUpDownCurrency gt 0" />
+        <Function name="IsWrittenDown" value="BillingPriceUpDownCurrency lt 0" />
+        <Style name="AlertWriteUp" ref="trafficlightGreen" condition="IsWrittenUp()" />
+        <Style name="AlertWriteDown" ref="trafficlightRed" condition="IsWrittenDown()" />
+      </Define>
+      <Table name="Full">
+        <Actions all="true" />
+        <Columns>
+          <Field source="JobNumber" title="Job No." />
+          <Field source="JobNameVar" title="Job Name" />
+          <Field source="PaymentCustomer" title="Bill to Customer No." />
+          <Field source="PaymentCustomerNameVar" title="Bill to Customer" />
+          <Field source="InvoiceCurrency" />
+          <UnitField source="BillingPriceForInvoicingInvoiceCurrency" unitSource="InvoiceCurrency" title="Billing Price, Invoice Currency" />
+          <UnitField source="BillingPriceUpDownCurrency" unitSource="Currency" title="Billing Price Up/Down, Currency" style="AlertWriteUp,AlertWriteDown" />
+          <Field source="ReleasedForInvoicing" title="Invoice{pass}" />
+          <Field source="PreferredInvoiceDate" title="Invoice Date" />
+          <Field source="DraftNumber" />
+          <Field source="BlanketInvoice" title="Blanket Draft" />
+          <Field source="InvoiceName" />
+          <UnitField source="QuantityUpDownTime" unitSource="TimeRegistrationUnit" title="Up/Down, Time" />
+          <Field source="Currency" title="Currency (Job)" />
+          <Field source="CustomerNumber" />
+          <Field source="Name1" title="Customer" />
+          <Field source="CompanyNumber" />
+          <Field source="CompanyNameVar" title="Company" />
+          <Field source="SettlingCompany" />
+          <Field source="SettlingCompanyNameVar" title="Settling Company" />
+          <Field source="DepartmentNumber" />
+        </Columns>
+      </Table>
+    </LowerPane>
+  </Layout>
+</MDML>

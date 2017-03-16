@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MDML xmlns="http://www.deltek.com/ns/mdml" version="0.97">
+  <Layout source="CustomerCard" name="CustomerCard_Card">
+    <Pane>
+      <Define>
+        <Include fragment="GD_OptionLists" />
+        <Include fragment="GD_Dimensions" />
+        <Include fragment="GD_Approvals" />
+        <Include fragment="GD_WebServices" />
+        <Trigger name="CreateSubCustomer">
+          <Assign source="InsertBelowParentInHierarchy" value="true" />
+          <Assign source="ParentCustomer" value="parent.CustomerNumber" />
+          <Assign source="ParentCustomerNameVar" value="parent.Name1" />
+        </Trigger>
+      </Define>
+      <Wizard name="CreateSubCustomerWizard" title="Create Sub Customer">
+        <Page form="CreateSubCustomerPage1" title="New Sub Customer" preTrigger="CreateSubCustomer" />
+      </Wizard>
+      <Form name="CreateSubCustomerPage1">
+        <Actions all="true" />
+        <Column style="fullWidth">
+          <Group title="Customer{Debitor}">
+            <Reference foreignKey="CustomerNumber_Customer" appearance="maximized" descriptionMandatory="true" keySuggestions="none" keyShadowTitle="Number (blank for default)" />
+            <Field source="Name2" appearance="maximized" shadowTitle="Address 1" />
+            <Field source="Name3" appearance="maximized" shadowTitle="Address 2" />
+            <ZipCity citySource="PostalDistrict" zipSource="ZipCode" appearance="maximized" cityShadowTitle="City" zipShadowTitle="Postal Code" />
+            <Field source="Attention" />
+            <Field source="Country" mandatory="ParentCustomer=''" />
+            <Field source="Telephone" />
+            <Field source="ElectronicMailAddress" />
+          </Group>
+          <Group title="Parent Customer">
+            <Reference foreignKey="ParentCustomer_Customer" open="false" />
+          </Group>
+          <Group title="Sales Person">
+            <Reference foreignKey="SalesPersonNumber_Employee" title="Employee" />
+          </Group>
+        </Column>
+      </Form>
+      <Form name="ParentCustomerOverview">
+        <Row>
+          <Group title="Customer{Debitor}">
+            <Reference foreignKey="CustomerNumber_Customer" title="Customer" />
+            <Field source="LevelNameVar" title="Level" size="standard" />
+          </Group>
+        </Row>
+        <Row>
+          <If condition="maconomy:booleanSysPar('UseCustomerLevel2')">
+            <Group title="Hierarchy">
+              <Reference title="^{Level1NameVar}" keySource="Level1CustomerNumber" descriptionSource="Level1CustomerNameVar" descriptionOpen="false" />
+              <Reference title="^{Level2NameVar}" keySource="Level2CustomerNumber" descriptionSource="Level2CustomerNameVar" descriptionOpen="false" />
+              <If condition="maconomy:booleanSysPar('UseCustomerLevel3')">
+                <Reference title="^{Level3NameVar}" keySource="Level3CustomerNumber" descriptionSource="Level3CustomerNameVar" descriptionOpen="false" />
+                <If condition="maconomy:booleanSysPar('UseCustomerLevel4')">
+                  <Reference title="^{Level4NameVar}" keySource="Level4CustomerNumber" descriptionSource="Level4CustomerNameVar" descriptionOpen="false" />
+                  <If condition="maconomy:booleanSysPar('UseCustomerLevel5')">
+                    <Reference title="^{Level5NameVar}" keySource="Level5CustomerNumber" descriptionSource="Level5CustomerNameVar" descriptionOpen="false" />
+                  </If>
+                </If>
+              </If>
+            </Group>
+          </If>
+        </Row>
+      </Form>
+      <Form name="Information" style="fullWidth">
+        <Actions>
+          <If condition="not hasWorkspace('Approvals')">
+            <Update />
+            <Delete />
+            <Print />
+          </If>
+          <PrintThis />
+          <If condition="(hasWorkspace('Approvals') or hasWorkspace('Customers'))">
+            <If condition="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.CanUseApprovalHierarchiesVar">
+              <Action source="Submit" />
+            </If>
+            <If condition="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.UseApprovalHierarchiesVar">
+              <Action source="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.ApproveAll" title="Approve" icon="Approve" disabled="not isActionEnabled('Approve')" />
+              <Action source="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.RejectAll" title="Reject" wizard="RejectAllWizard" icon="Reject" disabled="not Submitted" />
+              <Action source="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.ResetAll" title="Undo Approval/Reject" icon="Remove" disabled="not Submitted" />
+            </If>
+          </If>
+        </Actions>
+        <Column>
+          <If condition="hasWorkspace('Approvals') or hasWorkspace('Customers')">
+            <Group ref="ApprovalStatusFromApprovalGroup" />
+          </If>
+          <Group title="Ship to Customer{Debitor}">
+            <Field source="CustomerNumber" shadowTitle="Number" />
+            <Field source="Name1" appearance="maximized" shadowTitle="Name" />
+            <Field source="Name2" appearance="maximized" shadowTitle="Address 1" />
+            <Field source="Name3" appearance="maximized" shadowTitle="Address 2" />
+            <ZipCity citySource="PostalDistrict" zipSource="ZipCode" appearance="maximized" cityShadowTitle="City" zipShadowTitle="Postal Code" />
+            <Field source="Name4" appearance="maximized" shadowTitle="Address 3" />
+            <Field source="Name5" appearance="maximized" shadowTitle="Address 4" />
+            <Field source="Attention" />
+            <Field source="Country" />
+            <Field source="Telephone" />
+            <Field source="Telefax" />
+            <Field source="Telex" title="Website" />
+            <Field source="ElectronicMailAddress" />
+            <Field source="ContactPerson" />
+            <Reference foreignKey="OurContact_Employee" title="^{fieldTitle('OurContact')}" />
+            <Field source="TerminationDate" />
+          </Group>
+          <Group title="Responsible Staff">
+            <Reference foreignKey="AccountManagerNumber_Employee" />
+            <Reference foreignKey="SalesPersonNumber_Employee" />
+            <Reference foreignKey="EmployeeNumber6_Employee" />
+            <Reference foreignKey="EmployeeNumber7_Employee" />
+          </Group>
+        </Column>
+        <Column>
+          <Group title="Bill to Customer{Debitor}">
+            <Field source="PaymentCustomer" title="Customer No.{Debitor}" shadowTitle="Number" />
+            <Field source="Name1Var" appearance="maximized" shadowTitle="Name" />
+            <Field source="Name2Var" appearance="maximized" shadowTitle="Address 1" />
+            <Field source="Name3Var" appearance="maximized" shadowTitle="Address 2" />
+            <ZipCity citySource="PostalDistrictVar" zipSource="ZipCodeVar" appearance="maximized" cityShadowTitle="City" zipShadowTitle="Postal Code" />
+            <Field source="Name4Var" appearance="maximized" shadowTitle="Address 3" />
+            <Field source="Name5Var" appearance="maximized" shadowTitle="Address 4" />
+            <Field source="AttentionVar" title="Attn." />
+            <Field source="CountryVar" title="Country" />
+            <Field source="TelephoneVar" title="Phone" />
+            <Field source="TelefaxVar" title="Fax" />
+            <Field source="TelexVar" title="Website" />
+            <Field source="ElectronicMailAddressVar" title="E-mail{native}" />
+          </Group>
+          <Group title="Statistics">
+            <Reference foreignKey="Specification1Name_Specification1" />
+            <Field source="SelectedOption10" size="large" title="Selected Value 10{Customer}" />
+            <Field source="SelectedOption5" size="large" title="Selected Value 5{Customer}" />
+            <Field source="FiscalYearEndMonth" size="large" />
+            <Field source="CustomerPopup1" size="large" title="Popup 1{Customer}" />
+            <Field source="CustomerPopup2" size="large" title="Popup 2{Customer}" />
+          </Group>
+        </Column>
+        <Column>
+          <Group title="Parent Customer">
+            <If condition="maconomy:booleanSysPar('UseCustomerLevel2')">
+              <Boolean source="InsertBelowParentInHierarchy" />
+            </If>
+            <Field source="ParentCustomer" title="Customer No.{Debitor}" searchView="AllowForUseAsTemplateParentCustomer" searchOption="Allowed" />
+            <Field source="ParentCustomerNameVar" title="Name" />
+            <Field source="LinkingRuleName" />
+          </Group>
+          <If condition="maconomy:booleanSysPar('UseCustomerLevel2')">
+            <Group title="Customer Hierarchy">
+              <Reference title="^{Level1NameVar}" keySource="Level1CustomerNumber" descriptionSource="Level1CustomerNameVar" descriptionOpen="false" />
+              <Reference title="^{Level2NameVar}" keySource="Level2CustomerNumber" descriptionSource="Level2CustomerNameVar" descriptionOpen="false" />
+              <If condition="maconomy:booleanSysPar('UseCustomerLevel3')">
+                <Reference title="^{Level3NameVar}" keySource="Level3CustomerNumber" descriptionSource="Level3CustomerNameVar" descriptionOpen="false" />
+                <If condition="maconomy:booleanSysPar('UseCustomerLevel4')">
+                  <Reference title="^{Level4NameVar}" keySource="Level4CustomerNumber" descriptionSource="Level4CustomerNameVar" descriptionOpen="false" />
+                  <If condition="maconomy:booleanSysPar('UseCustomerLevel5')">
+                    <Reference title="^{Level5NameVar}" keySource="Level5CustomerNumber" descriptionSource="Level5CustomerNameVar" descriptionOpen="false" />
+                  </If>
+                </If>
+              </If>
+            </Group>
+          </If>
+        </Column>
+      </Form>
+      <Form name="PriceAndBilling">
+        <Actions>
+          <If condition="not hasWorkspace('Approvals')">
+            <Update />
+          </If>
+        </Actions>
+        <Column>
+          <Group title="Pricing">
+            <Reference foreignKey="CostJobPriceList_JobPriceListInformation" title="Job Price List, Cost" keyShadowTitle="Name" descriptionShadowTitle="Description" />
+            <Reference foreignKey="IntercompanyJobPriceList_JobPriceListInformation" title="Job Price List, Intercomp." keyShadowTitle="Name" descriptionShadowTitle="Description" />
+            <Reference foreignKey="JobPriceList_JobPriceListInformation" title="Job Price List, Sales" keyShadowTitle="Name" descriptionShadowTitle="Description" />
+            <Reference foreignKey="StandardBillingPriceList_JobPriceListInformation" title="Job Price List, Std. Sales" keyShadowTitle="Name" descriptionShadowTitle="Description" />
+            <Field source="JobMarkUpPercentage" />
+            <Field source="JobSurchargeRuleName" />
+          </Group>
+          <Group title="Billing">
+            <Field source="InvoiceLayout" />
+            <Field source="DetailedInvoiceLayout" />
+            <Boolean source="ShowCustomerBalancesOnInvoice" />
+            <Boolean source="ShowCustomerStatementOnInvoice" />
+            <Boolean source="ShowCustomerAgingOnInvoice" />
+            <Field source="CustomerPopup5" title="Invoice Delivery Method"/>
+          </Group>
+          <Group title="Account Statement Customer">
+            <Field source="AccountStatementCustomer" title="Customer No.{Debitor}" />
+            <Field source="StatementName1" title="Name" />
+          </Group>
+        </Column>
+      </Form>
+      <Form name="Dimensions">
+        <Actions>
+          <If condition="not hasWorkspace('Approvals')">
+            <Update />
+          </If>
+        </Actions>
+        <Column>
+          <Group title="Dimension Combination">
+            <Field source="DimensionCombNumber" title="Dim. Comb. No." />
+          </Group>
+          <Group ref="DerivedCompanyGroup" />
+          <Group ref="DerivedDimensionGroup" />
+          <Group title="Settling Company">
+            <Field source="SettlingCompany" title="Company No." />
+            <Field source="SettlingCompanyNameVar" title="Name" />
+            <Field source="BaseCurrencyVar" title="Base Currency" />
+          </Group>
+        </Column>
+      </Form>
+      <Form name="GeneralInformation">
+        <Actions>
+          <If condition="not hasWorkspace('Approvals')">
+            <Update />
+          </If>
+        </Actions>
+        <Column>
+          <Group title="General Information">
+            <Field source="DepartmentNumber" />
+            <Field source="Language" />
+            <Field source="Currency" />
+            <Field source="CustomerType" />
+            <Field source="CustomerGroup" />
+            <Field source="Enterprise" />
+            <Field source="Segment" />
+            <Field source="Area" />
+            <Field source="CompanyVATCode" />
+            <Boolean source="VAT" />
+            <Field source="VATNumber" />
+            <Field source="CompanyRegistrationNumber" title="Comp. Reg. No." />
+            <Field source="CNRNumber" title="CNR No." />
+            <Field source="Agreement" />
+            <Field source="Remark" />
+            <Field source="HolidayCalendarName" />
+            <Field source="StockSymbol" />
+            <Field source="FiscalYearEndMonth" />
+          </Group>
+        </Column>
+      </Form>
+      <Form name="ExtraInformation">
+        <Actions>
+          <If condition="not hasWorkspace('Approvals')">
+            <Update />
+          </If>
+        </Actions>
+        <Row>
+          <Column>
+            <Group title="Option List Fields" style="fullWidth">
+              <Pair firstSource="OptionListNumber1" secondSource="SelectedOption1" firstShadowTitle="List" secondShadowTitle="Value" appearance="maximized" />
+              <Pair firstSource="OptionListNumber2" secondSource="SelectedOption2" firstShadowTitle="List" secondShadowTitle="Value" appearance="maximized" />
+              <Pair firstSource="OptionListNumber3" secondSource="SelectedOption3" firstShadowTitle="List" secondShadowTitle="Value" appearance="maximized" />
+              <Pair firstSource="OptionListNumber4" secondSource="SelectedOption4" firstShadowTitle="List" secondShadowTitle="Value" appearance="maximized" />
+              <Pair firstSource="OptionListNumber6" secondSource="SelectedOption6" firstShadowTitle="List" secondShadowTitle="Value" appearance="maximized" />
+              <Pair firstSource="OptionListNumber7" secondSource="SelectedOption7" firstShadowTitle="List" secondShadowTitle="Value" appearance="maximized" />
+              <Pair firstSource="OptionListNumber8" secondSource="SelectedOption8" firstShadowTitle="List" secondShadowTitle="Value" appearance="maximized" />
+              <Pair firstSource="OptionListNumber9" secondSource="SelectedOption9" firstShadowTitle="List" secondShadowTitle="Value" appearance="maximized" />
+            </Group>
+            <Group title="Customer Job Option Lists">
+              <Pair firstSource="CustomerJobOptionListNumber1" secondSource="SelectedCustomerJobOption1" firstShadowTitle="List" secondShadowTitle="Value" appearance="maximized" />
+              <Pair firstSource="CustomerJobOptionListNumber2" secondSource="SelectedCustomerJobOption2" firstShadowTitle="List" secondShadowTitle="Value" appearance="maximized" />
+              <Pair firstSource="CustomerJobOptionListNumber3" secondSource="SelectedCustomerJobOption3" firstShadowTitle="List" secondShadowTitle="Value" appearance="maximized" />
+            </Group>
+          </Column>
+          <Column>
+            <Group title="Employees">
+              <Reference foreignKey="EmployeeNumber1_Employee" title="Employee 1" />
+              <Reference foreignKey="EmployeeNumber2_Employee" title="Employee 2" />
+              <Reference foreignKey="EmployeeNumber3_Employee" title="Employee 3" />
+              <Reference foreignKey="EmployeeNumber4_Employee" title="Employee 4" />
+              <Reference foreignKey="EmployeeNumber5_Employee" title="Employee 5" />
+              <Reference foreignKey="EmployeeNumber8_Employee" title="Employee 8" />
+              <Reference foreignKey="EmployeeNumber9_Employee" title="Employee 9" />
+              <Reference foreignKey="EmployeeNumber10_Employee" title="Employee 10" />
+            </Group>
+            <Group title="Extra Fields">
+              <Field source="CustomerPopup1" title="Popup 1{Customer}" />
+              <Field source="CustomerPopup2" title="Popup 2{Customer}" />
+              <Field source="CustomerPopup3" title="Popup 3" />
+              <Field source="CustomerPopup4" title="Popup 4" />
+              <Field source="CustomerPopup5" title="Popup 5" />
+            </Group>
+          </Column>
+        </Row>
+        <Row>
+          <Group title="Remarks{pl}">
+            <Field source="CustomerRemark1" appearance="maximized" />
+            <Field source="CustomerRemark2" appearance="maximized" />
+            <Field source="CustomerRemark3" appearance="maximized" />
+            <Field source="CustomerRemark4" appearance="maximized" />
+            <Field source="CustomerRemark5" appearance="maximized" />
+            <Field source="CustomerRemark6" appearance="maximized" />
+            <Field source="CustomerRemark7" appearance="maximized" />
+            <Field source="CustomerRemark8" appearance="maximized" />
+            <Field source="CustomerRemark9" appearance="maximized" />
+            <Field source="CustomerRemark10" appearance="maximized" />
+            <Field source="CustomerRemark11" appearance="maximized" />
+            <Field source="CustomerRemark12" appearance="maximized" />
+            <Field source="CustomerRemark13" appearance="maximized" />
+            <Field source="CustomerRemark14" appearance="maximized" />
+            <Field source="CustomerRemark15" appearance="maximized" />
+            <Field source="CustomerRemark16" appearance="maximized" />
+            <Field source="CustomerRemark17" appearance="maximized" />
+            <Field source="CustomerRemark18" appearance="maximized" />
+            <Field source="CustomerRemark19" appearance="maximized" />
+            <Field source="CustomerRemark20" appearance="maximized" />
+          </Group>
+        </Row>
+      </Form>
+      <Browser name="CompanyWebsite" autoRefresh="true" title="Company Website">
+        <Url value="Telex" />
+      </Browser>
+    </Pane>
+  </Layout>
+</MDML>
