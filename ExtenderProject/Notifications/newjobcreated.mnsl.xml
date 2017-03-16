@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MNSL xmlns="http://www.deltek.com/ns/mnsl" version="0.2">
+  <Notifications name="NewJobCreated" title="New Job">
+    <Query entity="NotificationUniverses::JobCost::NewJobCreated">
+      <Restriction condition="JobHeader.BlockedForInvoicing" />
+    </Query>
+    <Link workspace="Jobs">
+      <Description template="^2 (^1), ^3" arguments="JobHeader.JobNumber JobHeader.JobName JobHeader.Name1" />
+      <Waypoint pane="Jobs_Filter">
+        <Restriction title="New Job">
+          <Match queryField="JobHeader.JobNumber" field="JobNumber" />
+        </Restriction>
+      </Waypoint>
+      <Target pane="JobOverview_Card">
+        <Restriction title="Job">
+          <Match queryField="JobHeader.InstanceKey" field="InstanceKey" />
+        </Restriction>
+      </Target>
+    </Link>
+  </Notifications>
+</MNSL>
