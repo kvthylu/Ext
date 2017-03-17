@@ -55,6 +55,7 @@
             <Reference foreignKey="ProjectManagerNumber_Employee" />
 <!--             <Reference foreignKey="LocationName_Location" keyShadowTitle="Name" descriptionShadowTitle="Description" /> -->
             <Reference foreignKey="Specification2Name_Specification2" keyShadowTitle="Name" descriptionShadowTitle="Description" />
+            <Field source="LocalSpec1Name" />
             <If condition="TemplateJobNumber = ''">
               <Field source="JobGroup" />
               <Field source="JobInvoiceableVar" />
@@ -139,6 +140,7 @@
             <Reference foreignKey="ProjectName_Project" />
             <Reference foreignKey="Specification1Name_Specification1" />
             <Reference foreignKey="Specification2Name_Specification2" />
+            <Field source="LocalSpec1Name" size="medium" />
           </Group>
           <Group title="Responsible Staff">
             <Reference foreignKey="SalesPersonNumber_Employee" />
