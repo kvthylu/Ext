@@ -346,7 +346,6 @@
         <Style name="MissingTask" ref="attentionField" condition="LineDetailsTypeVar = LineDetailsTypeType'Task" />
         <Style name="MissingExpenseJustification" ref="attentionField" condition="LineDetailsTypeVar = LineDetailsTypeType'\Expense justification\" />
         <Style name="LineNotOK" ref="attentionField" condition="LineDetailsTypeVar != LineDetailsTypeType'OK" />
-        <Style name="MissingJustification" ref="attentionField" condition="JustificationCompleteVar = false" />
         <Style name="hours" zeroSuppression="true" size="tiny" />
       </Define>
       <Table name="Full">
@@ -460,7 +459,7 @@
           <Field source="JobNameVar" title="Job Name" style="MissingJob" />
           <Field source="CustomerNameVar" title="Customer Name" />
           <Field source="TaskNameVar" style="MissingTask" />
-          <Field source="Text" open="JustificationRequiredVar = false" style="MissingJustification" />
+          <Field source="Text"/>
           <Field source="ExpenseJustification" style="MissingExpenseJustification" />
           <Field source="Reference" size="tiny" />
           <Field source="NumberOf" size="tiny" />
