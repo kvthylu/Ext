@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MDML xmlns="http://www.deltek.com/ns/mdml" version="0.97">
+  <Layout source="JobInformation">
+    <FilterPane>
+      <Filter name="Standard">
+        <Compact>
+          <Description template="^1 (^2), ^3" arguments="JobName;JobNumber;Name1" />
+        </Compact>
+        <Columns>
+          <Field source="JobNumber" />
+          <Field source="JobName" />
+          <Field source="JobGroup" />
+          <Field source="NotInvoiceable" />
+          <Field source="InternalJob" />
+          <Field source="Status" />
+          <Field source="ConvertedBy" />
+          <Field source="ConversionDate" />
+          <Field source="ProjectManagerNumber" />
+          <Field source="SalesPersonNumber" />
+        </Columns>
+      </Filter>
+    </FilterPane>
+    <UpperPane>
+      <Define>
+        <Include fragment="GD_Dimensions" />
+      </Define>
+      <Form name="Full">
+        <Actions all="true" />
+        <Row>
+          <Column>
+            <Group title="Job">
+              <Reference foreignKey="JobNumber_JobHeader" />
+              <Field source="JobGroup" />
+              <Field source="Status" />
+              <Boolean source="Template" />
+              <Boolean source="BlockedForBudgeting" title="Blocked for Budg." />
+              <Boolean source="BlockedForTimeRegistrations" title="Blocked for Time Reg." />
+              <Boolean source="BlockedForAmountRegistrations" title="Blocked for Amount Reg." />
+              <Boolean source="BlockedForInvoicing" title="Blocked for Inv." />
+              <Field source="Closed" />
+            </Group>
+            <Group title="Ship to Address">
+              <Reference foreignKey="CustomerNumber_Customer" descriptionSource="Name1" />
+              <Field source="Name2" appearance="maximized" />
+              <Field source="Name3" appearance="maximized" />
+              <ZipCity citySource="PostalDistrict" zipSource="ZipCode" appearance="maximized" />
+              <Field source="Name4" appearance="maximized" />
+              <Field source="Name5" appearance="maximized" />
+              <Field source="Attention" />
+              <Field source="Country" />
+              <Field source="Telephone" />
+              <Field source="Telefax" />
+              <Field source="Telex" />
+              <Field source="ElectronicMailAddress" />
+            </Group>
+            <If condition="maconomy:booleanSysPar('UseCustomerLevel2')">
+              <Group title="Customer Hierarchy">
+                <Reference title="^{Level1NameVar}" keySource="Level1CustomerNumberVar" descriptionSource="Level1CustomerNameVar" descriptionOpen="false" />
+                <Reference title="^{Level2NameVar}" keySource="Level2CustomerNumberVar" descriptionSource="Level2CustomerNameVar" descriptionOpen="false" />
+                <If condition="maconomy:booleanSysPar('UseCustomerLevel3')">
+                  <Reference title="^{Level3NameVar}" keySource="Level3CustomerNumberVar" descriptionSource="Level3CustomerNameVar" descriptionOpen="false" />
+                  <If condition="maconomy:booleanSysPar('UseCustomerLevel4')">
+                    <Reference title="^{Level4NameVar}" keySource="Level4CustomerNumberVar" descriptionSource="Level4CustomerNameVar" descriptionOpen="false" />
+                    <If condition="maconomy:booleanSysPar('UseCustomerLevel5')">
+                      <Reference title="^{Level5NameVar}" keySource="Level5CustomerNumberVar" descriptionSource="Level5CustomerNameVar" descriptionOpen="false" />
+                    </If>
+                  </If>
+                </If>
+              </Group>
+            </If>
+            <Group title="Settling Company">
+              <Reference foreignKey="SettlingCompany_CompanyInformation" />
+            </Group>
+            <Group title="Payment">
+              <Field source="PaymentTerms" title="Pmt. Terms" />
+              <Boolean source="ToBeBlanketInvoiced" />
+            </Group>
+            <Group title="Customer Information{1}">
+              <Field source="DepartmentNumber" />
+              <Field source="CustomerGroup" />
+              <Field source="Language" />
+              <Boolean source="VAT" />
+              <Field source="VATNumber" />
+              <Field source="CompanyVATCode" />
+              <Field source="CustomerPaymentMode" suggestions="onDemand" />
+              <Field source="GlobalLocationNumber" />
+              <Field source="Enterprise" />
+              <Field source="Segment" />
+              <Field source="Area" />
+              <Boolean source="PostVendorPaymentExchangeRateVariancesOnJob" />
+            </Group>
+            <Group title="Credit Memo">
+              <Field source="LastCreditMemoDate" title="Last Credit Memo Date" />
+              <Field source="NumberOfCreditings" title="No. Credit Memos" />
+              <Field source="NumberOfCreditMemos" title="No. of Copies" />
+            </Group>
+          </Column>
+          <Column>
+            <Group title="Billing Address">
+              <Field source="PaymentCustomer" />
+              <Field source="Appropriation" title="Appropriation" />
+              <Field source="InvoiceCurrency" />
+              <If condition="maconomy:booleanSysPar('AllowJobSpecificPaymentAddresses')">
+                <Field source="JobPayerName1Var" appearance="maximized" />
+                <Field source="JobPayerName2Var" appearance="maximized" />
+                <Field source="JobPayerName3Var" appearance="maximized" />
+                <ZipCity citySource="JobPayerPostalDistrictVar" zipSource="JobPayerZipCodeVar" appearance="maximized" />
+                <Field source="JobPayerName4Var" appearance="maximized" />
+                <Field source="JobPayerName5Var" appearance="maximized" />
+                <Field source="JobPayerAttVar" title="Attn." />
+                <Field source="JobPayerCountryVar" title="Country" />
+                <Field source="JobPayerPhoneVar" title="Phone" />
+                <Field source="JobPayerFaxVar" title="Fax" />
+                <Field source="JobPayerTelexVar" title="Telex" />
+                <Field source="JobPayerElectronicMailAddressVar" title="E-mail{native}" />
+                <Boolean source="JobSpecificPaymentAddressVar" title="Job Specific Address" />
+              </If>
+              <Else>
+                <Field source="PayerName1Var" appearance="maximized" />
+                <Field source="PayerName2Var" appearance="maximized" />
+                <Field source="PayerName3Var" appearance="maximized" />
+                <ZipCity citySource="PayerPostalDistrictVar" zipSource="PayerZipCodeVar" appearance="maximized" />
+                <Field source="PayerName4Var" appearance="maximized" />
+                <Field source="PayerName5Var" appearance="maximized" />
+                <If condition="maconomy:booleanSysPar('AllowJobSpecificPaymentAttentionPersons')">
+                  <Field source="JobPayerAttVar" title="Attn." />
+                </If>
+                <Else>
+                  <Field source="PayerAttVar" title="Attn." />
+                </Else>
+                <Field source="PayerCountryVar" title="Country" />
+              </Else>
+            </Group>
+            <Group title="Company">
+              <Reference foreignKey="CompanyNumber_CompanyInformation" />
+            </Group>
+            <Group title="Quote">
+              <Field source="LastQuotationDate" title="Date Printed" />
+              <Field source="NumberOfQuotations" title="No. of Copies" />
+            </Group>
+            <Group title="Order Confirmation">
+              <Field source="LastOrderConfDate" title="Date Printed" />
+              <Field source="NumberOfOrderConfirmations" title="No. of Copies" />
+            </Group>
+            <Group title="Invoice{noun}">
+              <Field source="LastInvoiceDate" title="Date of Last Invoice" />
+              <Field source="NumberOfInvoicings" title="No. Invoices" />
+              <Field source="NumberOfInvoices" title="No. of Copies" />
+            </Group>
+            <Group ref="UserUpdateGroup" />
+            <Group title="Budget Texts">
+              <Boolean source="TransferTextsToPurchaseOrder" />
+            </Group>
+          </Column>
+        </Row>
+        <Row>
+          <Group title="Dimension Combination">
+            <Reference foreignKey="DimensionCombNumber_DimensionCombHeader" />
+          </Group>
+        </Row>
+        <Row>
+          <Group ref="DerivedCompanyGroup" />
+        </Row>
+        <Row>
+          <Group ref="DerivedDimensionGroup" />
+        </Row>
+      </Form>
+      <Form name="JobHome_Customer">
+        <Actions all="true" />
+        <Row>
+          <Column>
+            <Group title="Delivery Address">
+              <Reference foreignKey="CustomerNumber_Customer" descriptionSource="Name1" descriptionSuggestions="none" />
+              <Field source="Name2" title="Address" shadowTitle="Street" />
+              <Field source="Name3" title="" />
+              <ZipCity citySource="PostalDistrict" zipSource="ZipCode" title="" cityShadowTitle="Postal District" zipShadowTitle="Zip Code" />
+              <Field source="Name4" title="" />
+              <Field source="Name5" title="" />
+              <Field source="Country" />
+              <Field source="Attention" />
+              <Field source="Telephone" />
+              <Field source="ElectronicMailAddress" />
+              <Field source="Telex" title="Website" />
+              <Field source="PaymentTerms" />
+              <Field source="InvoiceLayout" />
+              <Field source="DetailedInvoiceLayout" />
+            </Group>
+          </Column>
+          <Column>
+            <Group title="Billing Address">
+              <If condition="maconomy:booleanSysPar('AllowJobSpecificPaymentAddresses')">
+                <Reference foreignKey="PaymentCustomer_Customer" descriptionSource="JobPayerName1Var" title="Customer" />
+                <Field source="JobPayerName2Var" title="Address" shadowTitle="Street" />
+                <Field source="JobPayerName3Var" title="" />
+                <ZipCity citySource="JobPayerPostalDistrictVar" zipSource="JobPayerZipCodeVar" title="" cityShadowTitle="Postal District" zipShadowTitle="Zip Code" />
+                <Field source="JobPayerName4Var" title="" />
+                <Field source="JobPayerName5Var" title="" />
+                <Field source="JobPayerCountryVar" />
+                <Field source="JobPayerAttVar" />
+                <Field source="JobPayerPhoneVar" />
+                <Field source="JobPayerElectronicMailAddressVar" />
+                <Field source="JobPayerTelexVar" title="Website" />
+                <BooleanGroup title="">
+                  <Boolean source="JobSpecificPaymentAddressVar" title="Job Specific Address" />
+                </BooleanGroup>
+              </If>
+              <Else>
+                <Reference foreignKey="PaymentCustomer_Customer" descriptionSource="PayerName1Var" title="Customer" />
+<!--                 <Field source="PayerName1Var" title="Customer" /> -->
+                <Field source="PayerName2Var" title="Address" shadowTitle="Street" />
+                <Field source="PayerName3Var" title="" />
+                <ZipCity citySource="PayerPostalDistrictVar" zipSource="PayerZipCodeVar" cityShadowTitle="Postal District" zipShadowTitle="Zip Code" />
+                <Field source="PayerName4Var" appearance="maximized" />
+                <Field source="PayerName5Var" appearance="maximized" />
+                <Field source="PayerCountryVar" title="Country" />
+                <If condition="maconomy:booleanSysPar('AllowJobSpecificPaymentAttentionPersons')">
+                  <Field source="JobPayerAttVar" title="Attn." />
+                </If>
+                <Else>
+                  <Field source="PayerAttVar" title="Attn." />
+                </Else>
+              </Else>
+            </Group>
+          </Column>
+          <Column>
+            <Group title="Bill to Customers Setup" style="textAlignment">
+              <Field source="AllocationValidFromVar" />
+            </Group>
+          </Column>
+        </Row>
+        <Row>
+          <Column>
+            <If condition="maconomy:booleanSysPar('UseCustomerLevel2')">
+              <Group title="Customer Hierarchy">
+                <Reference title="^{Level1NameVar}" keySource="Level1CustomerNumberVar" descriptionSource="Level1CustomerNameVar" descriptionOpen="false" />
+                <Reference title="^{Level2NameVar}" keySource="Level2CustomerNumberVar" descriptionSource="Level2CustomerNameVar" descriptionOpen="false" />
+                <If condition="maconomy:booleanSysPar('UseCustomerLevel3')">
+                  <Reference title="^{Level3NameVar}" keySource="Level3CustomerNumberVar" descriptionSource="Level3CustomerNameVar" descriptionOpen="false" />
+                  <If condition="maconomy:booleanSysPar('UseCustomerLevel4')">
+                    <Reference title="^{Level4NameVar}" keySource="Level4CustomerNumberVar" descriptionSource="Level4CustomerNameVar" descriptionOpen="false" />
+                    <If condition="maconomy:booleanSysPar('UseCustomerLevel5')">
+                      <Reference title="^{Level5NameVar}" keySource="Level5CustomerNumberVar" descriptionSource="Level5CustomerNameVar" descriptionOpen="false" />
+                    </If>
+                  </If>
+                </If>
+              </Group>
+            </If>
+          </Column>
+          <Column />
+          <Column />
+        </Row>
+      </Form>
+    </UpperPane>
+    <LowerPane>
+      <Define>
+        <Include fragment="GD_Dimensions" />
+      </Define>
+      <Table name="Full">
+        <Actions all="true" />
+        <Columns>
+          <Field source="OrderNumber" title="Order No.{0}" />
+          <Field source="ActivityNumber" title="Activity No." />
+          <Field source="ActivityTextVar" title="Activity Name" />
+          <Field source="TaskName" title="Task" />
+          <Field source="TaskTextVar" title="Task Description{1}" />
+          <Columns ref="DimensionColumns" />
+          <Field source="Text" title="Description{Text}" />
+        </Columns>
+      </Table>
+    </LowerPane>
+  </Layout>
+</MDML>
