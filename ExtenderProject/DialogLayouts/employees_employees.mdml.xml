@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MDML xmlns="http://www.deltek.com/ns/mdml" version="0.97">
+  <Layout name="Employees_Employees" source="Employees">
+    <UpperPane>
+      <Define>
+        <Include fragment="GD_OptionLists" />
+        <Include fragment="GD_Dimensions" />
+        <Include fragment="GD_Approvals" />
+        <Style name="fixedHours" size="small" />
+        <Function name="approvedOrRejected" value="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.ApprovalStatusVar = ApprovalStatusType'Rejected or ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.ApprovalStatusVar = ApprovalStatusType'Approved" />
+        <Function name="canUserApprove" value="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.CanUserApproveHeaderVar" />
+        <Function name="isDeltekTalentManagementIntegrationEnabled" value="maconomy:booleanSysPar('EnableDeltekTalentManagementIntegration', CompanyNumber)" />
+        <Function name="isEmployeeLinkedWithDeltekTalentManagement" value="isDeltekTalentManagementIntegrationEnabled() and HRSmartUserId != ''" />
+      </Define>
+      <Wizard name="CreateEmployeeWizard" title="Create Employee">
+        <Page form="CreateEmployeeWizardPage" title="Employee Information" />
+      </Wizard>
+      <Form name="CreateEmployeeWizardPage">
+        <Actions>
+          <Create />
+        </Actions>
+        <Group>
+          <Field source="EmployeeNumber" shadowTitle="Blank for default employee no." size="large" />
+          <Field source="Name1" title="Employee Name" />
+          <Field source="Name2" />
+          <Field source="Name3" />
+          <ZipCity citySource="PostalDistrict" zipSource="ZipCode" />
+          <Field source="Name4" />
+          <Field source="Name5" />
+          <Field source="Country" />
+        </Group>
+        <Group title="Contact Information">
+          <Field source="Telephone" />
+          <Field source="MobilePhone" />
+          <Field source="ElectronicMailAddress" />
+        </Group>
+        <Group title="Employment Information">
+          <Field source="DateEmployed" />
+          <Field source="Position" />
+          <Reference foreignKey="EmployeeCompanyNumber_CompanyInformation" />
+          <Reference foreignKey="SuperiorEmployee_Employee" title="Supervisor" />
+        </Group>
+        <Group title="Creation">
+          <Reference foreignKey="TemplateEmployeeNumber_Employee" />
+          <Field source="LinkingRuleName" shadowTitle="Blank for std. linking rule" size="large" />
+        </Group>
+        <Group title="Create User">
+          <Boolean source="CopyUsersFromTemplateVar" />
+          <Boolean source="CreateUserVar" />
+          <Field source="CreateUserTypeVar" suggestions="onDemand" />
+          <Field source="CreateUserNameVar" />
+          <Range firstSource="CreateUserFromValidVar" lastSource="CreateUserToValidVar" title="Validity Period" />
+        </Group>
+      </Form>
+      <Form name="Employees">
+        <Actions>
+          <If condition="not hasWorkspace('Approvals')">
+            <Update />
+            <Delete />
+          </If>
+          <Print />
+          <PrintThis />
+          <If condition="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.CanUseApprovalHierarchiesVar">
+            <Action source="Submit" />
+          </If>
+          <If condition="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.UseApprovalHierarchiesVar">
+            <Action source="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.ApproveAll" title="Approve" icon="Approve" disabled="not canUserApprove() or approvedOrRejected()" />
+            <Action source="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.RejectAll" title="Reject" wizard="RejectAllWizard" icon="Reject" disabled="not canUserApprove() or approvedOrRejected()" />
+            <Action source="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.ResetAll" title="Undo Approval/Reject" disabled="not canUserApprove() or not approvedOrRejected()" />
+          </If>
+          <If condition="maconomy:booleanSysPar('EnableEmployeeVendorLinking') and not hasWorkspace('Approvals')">
+            <If condition="isSolutionPropertyEnabled('IsCPASolution')">
+              <Action source="mount-&gt;VendorCard.Create" wizard="CPACreateEmployeeVendorWizard" title="Create Vendor" disabled="VendorNumber != ''" />
+            </If>
+            <Else>
+              <Action source="mount-&gt;VendorCard.Create" wizard="CreateEmployeeVendorWizard" title="Create Vendor" disabled="VendorNumber != ''" />
+            </Else>
+            <Action source="VendorNumber_Vendor-&gt;VendorCard.Submit" title="Submit Vendor" disabled="VendorNumber = '' or not VendorNumber_Vendor-&gt;VendorCard.AllowSubmissionVar" />
+          </If>
+          <If condition="isEmployeeLinkedWithDeltekTalentManagement()">
+            <Action source="SyncWithHRSmart" />
+          </If>
+        </Actions>
+        <Row>
+          <Column>
+            <Group ref="ApprovalStatusFromApprovalGroup" />
+            <Group title="Employee Information">
+              <Field source="EmployeeNumber" />
+              <Field source="Name1" appearance="maximized" shadowTitle="Name 1" open="not isEmployeeLinkedWithDeltekTalentManagement()" />
+              <Field source="Name2" appearance="maximized" shadowTitle="Name 2" open="not isEmployeeLinkedWithDeltekTalentManagement()" />
+              <Field source="Name3" appearance="maximized" shadowTitle="Name 3" open="not isEmployeeLinkedWithDeltekTalentManagement()" />
+              <ZipCity citySource="PostalDistrict" zipSource="ZipCode" appearance="maximized" cityShadowTitle="Postal District{District}" zipShadowTitle="Zip Code" open="not isEmployeeLinkedWithDeltekTalentManagement()" />
+              <Field source="Name4" appearance="maximized" shadowTitle="Name 4" open="not isEmployeeLinkedWithDeltekTalentManagement()" />
+              <Field source="Name5" appearance="maximized" shadowTitle="Name 5" open="not isEmployeeLinkedWithDeltekTalentManagement()" />
+              <Field source="Country" open="not isEmployeeLinkedWithDeltekTalentManagement()" />
+              <Field source="Initials" />
+              <Field source="Gender" />
+              <Field source="DateOfBirth" size="large" open="not isEmployeeLinkedWithDeltekTalentManagement()" />
+              <Field source="AgeVar" title="Age" />
+              <Field source="CNRNumber" />
+              <Boolean source="SalesEmployee" />
+              <Boolean source="AccountManager" />
+              <Field source="Position" open="not isEmployeeLinkedWithDeltekTalentManagement()" />
+              <Field source="EmployeePopup1" title="Employee Status" />
+              <Field source="PrimaryEmployeeCategoryNumber" title="Primary Category" size="large" />
+              <Field source="JobPriceGroupNumber" />
+              <If condition="isSolutionPropertyEnabled('IsCPASolution')">
+                <Field source="EmployeeType" title="Approver Group" />
+              </If>
+              <Else>
+                <Field source="EmployeeType" />
+              </Else>
+              <If condition="hasAddOn(128)">
+                <Boolean source="TransferToPeoplePlanner" />
+              </If>
+            </Group>
+          </Column>
+          <Column>
+            <Group title="Employment">
+              <Style size="large" />
+              <Field source="DateEmployed" open="not isEmployeeLinkedWithDeltekTalentManagement()" />
+              <Field source="DateEndEmployment" open="not isEmployeeLinkedWithDeltekTalentManagement()" />
+              <Boolean source="Blocked" />
+              <Field source="NoticeDate" />
+              <Field source="PensionDate" />
+              <Field source="PensionAgeVar" title="Retirement Age" size="small" />
+            </Group>
+            <Group title="Contact Information">
+              <Field source="Telephone" open="not isEmployeeLinkedWithDeltekTalentManagement()" />
+              <Field source="Telephone2" />
+              <Field source="MobilePhone" />
+              <Field source="MobilePhone2" />
+              <Field source="ElectronicMailAddress" open="not isEmployeeLinkedWithDeltekTalentManagement()" />
+            </Group>
+            <Group title="Contact Person">
+              <Link workspace="ContactPersons" arguments="ContactPersonNumber" template="^1" tooltip="Contact Persons workspace" title="Contact Person No." icon="WorkspaceLink">
+                <Waypoint pane="ContactPersons_Filter">
+                  <Restriction template="Selected Contact Person" expression="ContactPersonNumber=target.ContactPersonNumber" />
+                  <Focus>
+                    <Match value="ContactPersonNumber" field="ContactPersonNumber" />
+                  </Focus>
+                </Waypoint>
+                <Target pane="ContactPersons_Card" />
+                <Override condition="ContactPersonNumber = ''">
+                  <Link disabled="true" />
+                </Override>
+              </Link>
+            </Group>
+            <Group title="Talent Management{product Deltek Talent Management}">
+              <Field source="HRSmartUserId" title="User ID" open="not isEmployeeLinkedWithDeltekTalentManagement()" />
+            </Group>
+            <Group title="Outlay Settlement">
+              <Reference foreignKey="VendorNumber_Vendor" keySource="VendorNumber" open="not maconomy:booleanSysPar('EnableEmployeeVendorLinking')" descriptionSearchView="AllowForUseAsOutlayVendor" descriptionSearchOption="Allowed" keySearchView="AllowForUseAsOutlayVendor" keySearchOption="Allowed" />
+            </Group>
+          </Column>
+          <Column>
+            <Group title="Key Dimensions">
+              <Reference foreignKey="EmployeeCompanyNumber_CompanyInformation" keySource="CompanyNumber" />
+              <Reference foreignKey="Specification3Name_Specification3" keySource="Specification3Name" />
+              <Reference foreignKey="EntityName_Entity" keySource="EntityName" />
+              <Reference foreignKey="PurposeName_Purpose" keySource="PurposeName" />
+              <Field source="LocalSpec2Name" />
+            </Group>
+            <Group title="Related Employees">
+              <Reference foreignKey="SuperiorEmployee_Employee" title="Supervisor" />
+              <Reference foreignKey="SecretaryEmployee_Employee" title="Secretary" />
+              <Reference foreignKey="TutorEmployee_Employee" title="Mentor" />
+              <If condition="booleanSysPar('ApprovalOfAbsence')">
+                <Reference foreignKey="AbsenceApprover_Employee" title="Absence Approver" />
+              </If>
+            </Group>
+            <Group title="Document Archive">
+              <Reference foreignKey="DocumentArchiveNumber_DocumentArchiveHeader" keySource="DocumentArchiveNumber" descriptionShadowTitle="Description{0}" />
+            </Group>
+            <Group title="Access Level">
+              <Reference foreignKey="AccessLevelName_AccessLevelHeader" keySource="AccessLevelName" keyShadowTitle="Name" descriptionShadowTitle="Description" />
+            </Group>
+            <Group ref="UserUpdateGroup" />
+          </Column>
+        </Row>
+      </Form>
+    </UpperPane>
+  </Layout>
+</MDML>
