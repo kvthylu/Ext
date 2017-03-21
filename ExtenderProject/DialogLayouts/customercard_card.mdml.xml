@@ -106,6 +106,7 @@
           <Group title="Responsible Staff">
             <Reference foreignKey="AccountManagerNumber_Employee" />
             <Reference foreignKey="SalesPersonNumber_Employee" />
+            <Reference foreignKey="EmployeeNumber1_Employee" title="Managing Partner" />
             <Reference foreignKey="EmployeeNumber6_Employee" />
             <Reference foreignKey="EmployeeNumber7_Employee" />
           </Group>
@@ -264,7 +265,6 @@
           </Column>
           <Column>
             <Group title="Employees">
-              <Reference foreignKey="EmployeeNumber1_Employee" title="Employee 1" />
               <Reference foreignKey="EmployeeNumber2_Employee" title="Employee 2" />
               <Reference foreignKey="EmployeeNumber3_Employee" title="Employee 3" />
               <Reference foreignKey="EmployeeNumber4_Employee" title="Employee 4" />

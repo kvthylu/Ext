@@ -146,6 +146,7 @@
             <Reference foreignKey="SalesPersonNumber_Employee" />
             <Reference foreignKey="AccountManagerNumber_Employee" />
             <Reference foreignKey="ProjectManagerNumber_Employee" />
+            <Reference foreignKey="EmployeeNumber1_Employee" title="Managing Partner"/>
             <Reference foreignKey="EmployeeNumber6_Employee" />
             <Reference foreignKey="EmployeeNumber7_Employee" />
           </Group>
