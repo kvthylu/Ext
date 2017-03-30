@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MDML xmlns="http://www.deltek.com/ns/mdml" version="0.97">
+  <Layout name="invoiceediting_card" source="invoiceediting">
+    <UpperPane>
+      <Define>
+        <Include fragment="GD_Approvals" />
+        <Style name="AlertWriteUp" ref="trafficlightGreen" condition="BillingPriceUpDownCurrency gt 0" />
+        <Style name="AlertWriteDown" ref="trafficlightRed" condition="BillingPriceUpDownCurrency lt 0" />
+        <Style name="ToBeAdjustedOnDraft" ref="attentionField" parameters="FieldPar" condition="FieldPar != 0" />
+      </Define>
+      <Wizard name="WrapLines" title="Text Wrapping">
+        <Page form="Demo_WrapLines_Page1" title="Enter Line Width Percentage" />
+      </Wizard>
+      <Wizard name="CopyEditingFromInvoice" title="Copy Editing from Invoice">
+        <Page form="Demo_CopyEditingFromInvoice" title="Select Invoice to Copy" />
+      </Wizard>
+      <Wizard name="CopyEditingFromDraft" title="Copy Editing from Draft">
+        <Page form="Demo_CopyEditingFromDraft" title="Select Draft to Copy from" description="Enter Job No., Bill to Customer and Appropriation identifying the draft." />
+      </Wizard>
+      <Form name="Demo_WrapLines_Page1">
+        <Actions>
+          <Update />
+        </Actions>
+        <Group>
+          <Field source="LineWidthPercentage" />
+        </Group>
+      </Form>
+      <Form name="Demo_CopyEditingFromInvoice">
+        <Actions>
+          <Update />
+        </Actions>
+        <Group>
+          <Reference foreignKey="Card_RestoreFromInvoiceNumberVar_Invoice" title="Invoice No." style="zeroSuppression" />
+        </Group>
+      </Form>
+      <Form name="Demo_CopyEditingFromDraft">
+        <Actions>
+          <Update />
+        </Actions>
+        <Group>
+          <Field source="CopiesFromJobNumberVar" />
+          <Field source="CopyFromPaymentCustomerVar" />
+          <Field source="CopyFromAppropriationVar" />
+        </Group>
+      </Form>
+      <Form name="Demo">
+        <Actions all="true">
+          <Exclude>
+            <If condition="not ContainsDetailedSpecification">
+              <Action source="ShowSummary" />
+              <Action source="ShowDetailedSpecification" />
+            </If>
+            <If condition="not isActionEnabled('ShowSummary')">
+              <Action source="ShowSummary" />
+            </If>
+            <If condition="not isActionEnabled('ShowDetailedSpecification')">
+              <Action source="ShowDetailedSpecification" />
+            </If>
+            <If condition="not isActionEnabled('Submit')">
+              <Action source="Submit" />
+            </If>
+            <If condition="not isActionEnabled('Approve') or useApprovalHierarchies">
+              <Action source="Approve" />
+            </If>
+            <If condition="not isActionEnabled('CloseEditing')">
+              <Action source="CloseEditing" />
+            </If>
+            <If condition="not isActionEnabled('ReopenEditing')">
+              <Action source="ReopenEditing" />
+            </If>
+            <If condition="not ContainsDetailedSpecification">
+              <Action source="RestoreEditingDetailedSpecification" />
+            </If>
+            <If condition="not isActionEnabled('RestoreEditing')">
+              <Action source="RestoreEditing" />
+            </If>
+            <If condition="not isActionEnabled('RemoveOtherDrafts')">
+              <Action source="RemoveOtherDrafts" />
+            </If>
+            <If condition="not isActionEnabled('PrintInvoice')">
+              <Action source="PrintInvoice" />
+            </If>
+            <If condition="not isActionEnabled('PrintCreditMemo')">
+              <Action source="PrintCreditMemo" />
+            </If>
+          </Exclude>
+          <If condition="ContainsDetailedSpecification">
+            <Action source="RestoreEditing" title="Restore Editing, Summary" />
+          </If>
+          <If condition="submitted and not ApprovedForInvoicing">
+            <If condition="useApprovalHierarchies               and (hasWorkspace('Approvals')                  or hasWorkspace('DraftInvoices')                 or hasWorkspace('BatchJobInvoicing'))">
+              <If condition="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.CanUserApproveHeaderVar">
+                <Action source="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.ApproveAll" title="Approve Draft" icon="Approve" name="ApproveAll" />
+                <Action source="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.RejectAll" title="Reject Draft" wizard="RejectAllWizard" icon="Reject" name="RejectAll" />
+                <Action source="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.ResetAll" title="Undo Approval/Reject" icon="Remove" name="ResetAll" />
+              </If>
+            </If>
+          </If>
+          <If condition="Approved">
+            <Action source="ReopenEditing" />
+          </If>
+          <Action source="RestoreInvoice" title="Copy Editing from Invoice" wizard="CopyEditingFromInvoice" />
+          <Action source="CopyEditing" title="Copy Editing from Draft" wizard="CopyEditingFromDraft" />
+          <If condition="not enableLongTextEmulation()">
+            <Action source="WrapLines" title="Text Wrapping" wizard="WrapLines" />
+          </If>
+          <Order>
+            <Action ref="ShowSummary" />
+            <Action ref="ShowDetailedSpecification" />
+            <Action ref="Submit" />
+            <Action ref="Approve" />
+            <Action ref="ApproveAll" />
+            <Action ref="RejectAll" />
+            <Action ref="ResetAll" />
+            <Action ref="CloseEditing" />
+            <Action ref="ReopenEditing" />
+            <Action ref="PrintDraft" />
+            <Action ref="RemoveOtherDrafts" />
+            <Action ref="PrintInvoice" />
+            <Action ref="PrintCreditMemo" />
+            <Group title="More Actions">
+              <Action ref="RestoreEditing" />
+              <Action ref="RestoreEditingDetailedSpecification" />
+              <Action ref="RestoreInvoice" />
+              <Action ref="CopyEditing" />
+              <Action ref="WrapLines" />
+            </Group>
+          </Order>
+        </Actions>
+        <Column>
+          <If condition="DebitCredit = DebitCreditType'Credit">
+            <Group title="Credit Memo">
+              <Field source="InvoiceType" />
+              <Field source="DraftNumber" />
+              <Field source="BlanketInvoice" />
+              <Field source="BasedOnInvoiceNumber" style="zeroSuppression" />
+              <Field source="InvoiceName" />
+              <Field source="PaymentTerms" />
+              <Field source="PreferredInvoiceDate" />
+              <Field source="DueDateVar" title="Due Date" />
+            </Group>
+          </If>
+          <Else>
+            <Group title="Invoice">
+              <Field source="InvoiceType" />
+              <Field source="DraftNumber" />
+              <Field source="BlanketInvoice" />
+              <Field source="InvoiceTextListName" />
+              <Field source="InvoiceName" />
+              <Field source="PaymentTerms" />
+              <Field source="PreferredInvoiceDate" />
+              <Field source="DueDateVar" title="Due Date" />
+            </Group>
+          </Else>
+          <If condition="useApprovalHierarchies              and (hasWorkspace('Approvals')                 or hasWorkspace('DraftInvoices')                or hasWorkspace('BatchJobInvoicing'))">
+            <Group ref="ApprovalStatusFromApprovalGroup" />
+          </If>
+          <Else>
+            <Group title="Draft Status">
+              <Description title="Created" template="^1 by ^2" arguments="CreatedDate;CreatedBy" />
+              <If condition="Submitted">
+                <Description title="Submitted" template="^1 by ^2" arguments="DateSubmitted;SubmittedBy" />
+              </If>
+              <Else>
+                <Description title="Submitted" template="No" />
+              </Else>
+              <If condition="ApprovedForInvoicing">
+                <Description title="Approved" template="^1 by ^2" arguments="ApprovedForInvoicingDate;ApprovedForInvoicingBy" />
+              </If>
+              <Else>
+                <Description title="Approved" template="No" />
+              </Else>
+              <If condition="ContainsDetailedSpecification">
+                <Field source="ShowSection" open="false" title="Section" />
+                <Field source="ContainsDetailedSpecification" />
+              </If>
+            </Group>
+          </Else>
+        </Column>
+        <Column style="compact_amountAlignment">
+          <Group title="Editing">
+            <Field source="BillingPriceForInvoicingInvoiceCurrencyVar" title="Selected for Invoicing" />
+            <If condition="ContainsDetailedSpecification">
+              <Field source="DifferenceForInvoicingInvoiceCurrency" title="To be adjusted on draft, Summary" style="ToBeAdjustedOnDraft(DifferenceForInvoicingInvoiceCurrency)" />
+              <Field source="DifferenceForInvDetailInvoiceCurrency" title="To be adjusted on draft, Detailed Spec." style="ToBeAdjustedOnDraft(DifferenceForInvDetailInvoiceCurrency)" />
+            </If>
+            <Else>
+              <Field source="DifferenceForInvoicingInvoiceCurrency" title="To be adjusted on draft" style="ToBeAdjustedOnDraft(DifferenceForInvoicingInvoiceCurrency)" />
+            </Else>
+            <!-- Exclude all workspaces except opened via notifications -->
+            <If condition="not hasWorkspace('JobInvoicing')               and not hasWorkspace('BatchJobInvoicing')               and not hasWorkspace('BlanketInvoicing')">
+              <If condition="BlanketInvoiceCollectionKey != ''">
+                <Link workspace="BlanketInvoicing" template="Invoice Selection" icon="WorkspaceLink" appearance="maximized">
+                  <Waypoint pane="JobBlanketInvoiceSelection_Filter">
+                    <Restriction template="Selected Job" expression="JobNumber = target.JobNumber" />
+                    <Focus>
+                      <Match value="JobNumber" field="JobNumber" />
+                    </Focus>
+                  </Waypoint>
+                  <Target pane="BlanketInvoiceSelection_Card" />
+                </Link>
+              </If>
+              <Else>
+                <If condition="ContainsOnAccount">
+                  <Link workspace="Jobs" template="On Account Invoice Selection" icon="WorkspaceLink" appearance="maximized">
+                    <Waypoint pane="Jobs_Filter">
+                      <Restriction template="Selected Job" expression="JobNumber = target.JobNumber" />
+                      <Focus>
+                        <Match value="JobNumber" field="JobNumber" />
+                      </Focus>
+                    </Waypoint>
+                    <Target pane="OnAccountInvoiceSelection" />
+                  </Link>
+                </If>
+                <If condition="ContainsTimeAndMaterial">
+                  <Link workspace="Jobs" template="Invoice Selection" icon="WorkspaceLink" appearance="maximized">
+                    <Waypoint pane="Jobs_Filter">
+                      <Restriction template="Selected Job" expression="JobNumber = target.JobNumber" />
+                      <Focus>
+                        <Match value="JobNumber" field="JobNumber" />
+                      </Focus>
+                    </Waypoint>
+                    <Target pane="InvoiceSelection" />
+                  </Link>
+                </If>
+              </Else>
+            </If>
+          </Group>
+          <Group title="Price Breakdown">
+            <Field source="BillingPriceForInvoicingInvoiceCurrencyVar" title="Billing Price" />
+            <If condition="ContainsTimeAndMaterial">
+              <Field source="InvoiceDiscountVar" title="Invoice Discount" />
+              <Field source="SetOffOnAccountNetCurrencyVar" />
+            </If>
+            <If condition="Charge1TextVar != ''">
+              <Field source="Charge1CurrencyVar" title="^{Charge1TextVar}" />
+            </If>
+            <If condition="Charge2TextVar != ''">
+              <Field source="Charge2CurrencyVar" title="^{Charge2TextVar}" />
+            </If>
+            <If condition="Charge3TextVar != ''">
+              <Field source="Charge3CurrencyVar" title="^{Charge3TextVar}" />
+            </If>
+            <If condition="Charge4TextVar != ''">
+              <Field source="Charge4CurrencyVar" title="^{Charge4TextVar}" />
+            </If>
+            <Field source="TotalToPayInvoiceCurrencyVar" title="Balance Due" />
+            <If condition="ContainsTimeAndMaterial">
+              <Field source="BillingPriceUpDownCurrency" title="Write Up/Down" style="AlertWriteUp,AlertWriteDown" />
+            </If>
+            <If condition="JobSurchargeRuleName != ''">
+              <Field source="JobSurchargeRuleName" />
+            </If>
+          </Group>
+        </Column>
+        <Column>
+          <Group title="Billing Address">
+            <Field source="PaymentCustomer" />
+            <Field source="PayerName1" shadowTitle="Name 1" appearance="maximized" open="false" />
+            <Field source="PayerName2" shadowTitle="Name 2" open="false" appearance="maximized" />
+            <Field source="PayerName3" shadowTitle="Name 3" open="false" appearance="maximized" />
+            <ZipCity zipSource="PayerZipCode" zipShadowTitle="Zip Code" zipOpen="false" citySource="PayerPostalDistrict" cityShadowTitle="Postal District{District}" cityOpen="false" appearance="maximized" />
+            <Field source="PayerName4" shadowTitle="Name 4" open="false" appearance="maximized" />
+            <Field source="PayerAttention" title="Attn." open="false" />
+            <Field source="PayerCountry" title="Country" open="false" />
+            <Field source="PayerTelephone" title="Phone" open="false" />
+            <Field source="PayerElectronicMailAddress" title="E-mail{native}" open="false" />
+          </Group>
+        </Column>
+      </Form>
+    </UpperPane>
+  </Layout>
+</MDML>
