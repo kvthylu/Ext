@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MDML xmlns="http://www.deltek.com/ns/mdml" version="0.97">
+  <Layout source="JobInvoiceOverview" name="JobInvoicesCard">
+    <UpperPane>
+      <Define>
+        <Include fragment="GD_Dimensions" />
+        <Function name="IsOverdue" value="PaymentStatusVar = PaymentStatusType'Due" />
+        <Function name="IsSettled" value="PaymentStatusVar = PaymentStatusType'Reconciled" />
+        <Function name="IsOpen" value="PaymentStatusVar = PaymentStatusType'\Not Due\ or PaymentStatusVar = PaymentStatusType'\Not Reconciled\" />
+        <Style name="AlertOverdue" ref="trafficlightRed" condition="IsOverdue()" />
+        <Style name="AlertSettled" ref="trafficlightGreen" condition="IsSettled()" />
+        <Style name="AlertOpen" ref="trafficlightYellow" condition="IsOpen()" />
+      </Define>
+      <Form name="Overview" title="Invoice">
+        <Actions all="true" >
+          <Action title="Email Invoice" source="EmailOnAction" icon="Mail" >
+            <Argument valueString="PrintOriginal" parameter="Action" />
+
+            <Argument value="StringSysPar('MailPortAndServer', CompanyNumber)" parameter="MailServer" />
+            <Argument value="IntegerSysPar('MailPortAndServer', CompanyNumber)" parameter="MailPort" />
+            <Argument valueString="eml" parameter="ShowMessageInFormat" />
+            <Argument value="false" parameter="ShowResultToUser" />
+            
+            <Argument value="envVar('user.employeeinfo.ElectronicMailAddress')" parameter="Sender" />
+            <Argument value="envVar('user.employeeinfo.ElectronicMailAddress')" parameter="BccRecipients" />
+            <Argument value="PayerElectronicMailAddress" parameter="Recipients" />
+            
+            <Argument value="'Invoice no. ' + InvoiceNumber" parameter="Subject" />
+            <Argument value="'Dear ' + PayerAttention + '\n\n'
+      + 'Please find enclosed copy of invoice no. ' + InvoiceNumber + ', due by ' + DueDate + '. \n\n'
+       + 'Thanks in advance ' + '\n'
+       + envVar('user.employeeinfo.Name1') + '\n'
+       + 'Phone: ' + envVar('user.employeeinfo.Telephone') + '\n'
+       + SettlingCompanyNameVar + '\n'" parameter="Body" />
+          </Action>
+        
+        </Actions>
+        <Column>
+          <If condition="DebitCredit = DebitCreditType'Credit">
+            <Group title="Credit Memo" style="textAlignment">
+              <Field source="InvoiceNumber" />
+              <Field source="InvoiceDate" />
+              <Field source="DueDate" />
+              <Field source="DebitCredit" style="highlightOppositeSign" />
+              <Field source="InvoiceTypeVar" />
+              <Field source="ToBeBlanketInvoiced" />
+            </Group>
+          </If>
+          <Else>
+            <Group title="Invoice" style="textAlignment">
+              <Field source="InvoiceNumber" />
+              <Field source="InvoiceDate" />
+              <Field source="DueDate" />
+              <Field source="DebitCredit" />
+              <Field source="InvoiceTypeVar" />
+              <Field source="ToBeBlanketInvoiced" />
+            </Group>
+          </Else>
+          <Group title="Job" style="textAlignment">
+            <Reference foreignKey="JobNumber_JobHeader" />
+            <Reference foreignKey="ProjectManager_Employee" />
+          </Group>
+        </Column>
+        <Column>
+          <Group title="Price Breakdown" style="compact_amountAlignment">
+            <Field source="PaymentStatusVar" style="AlertOverdue,AlertSettled,AlertOpen" />
+            <Field source="Currency" />
+            <Field source="ItemSumCurrency" title="Billing Price" />
+            <If condition="ContainsTimeAndMaterial">
+              <Field source="InvoiceDiscountCurrency" />
+            </If>
+            <If condition="maconomy:booleanSysPar('UseMultipleVATLevels')">
+              <Field source="VATCurrency" title="Total Tax" />
+              <Field source="VAT1InvoiceCurrencyVar" title="Tax 1" />
+              <Field source="VAT2InvoiceCurrencyVar" title="Tax 2" />
+              <If condition="maconomy:booleanSysPar('ShowThreeVATLevels')">
+                <Field source="VAT3InvoiceCurrencyVar" title="Tax 3" />
+              </If>
+            </If>
+            <Else>
+              <Field source="VATCurrency" title="Tax{VAT}" />
+            </Else>
+            <If condition="ContainsOnAccount">
+              <Field source="ReconciledAmountCurrencyVar" />
+              <If condition="maconomy:booleanSysPar('UseMultipleVATLevels')">
+                <Field source="ReconciledVATCurrencyVar" />
+                <Field source="ReconciledVAT1CurrencyVar" />
+                <Field source="ReconciledVAT2CurrencyVar" />
+                <If condition="maconomy:booleanSysPar('ShowThreeVATLevels')">
+                  <Field source="ReconciledVAT3CurrencyVar" />
+                </If>
+              </If>
+              <Else>
+                <Field source="ReconciledVATCurrencyVar" />
+              </Else>
+              <Field source="ReconciledVar" />
+            </If>
+            <Else>
+              <Field source="OnAccountItemSumCurrency" title="Net on Account" />
+              <If condition="maconomy:booleanSysPar('UseMultipleVATLevels')">
+                <Field source="OnAccountVATCurrency" title="Total Tax on Account, Currency" />
+                <Field source="OnAccountVAT1CurrencyVar" title="Tax 1 on Account, Currency" />
+                <Field source="OnAccountVAT2CurrencyVar" title="Tax 2 on Account, Currency" />
+                <If condition="maconomy:booleanSysPar('ShowThreeVATLevels')">
+                  <Field source="OnAccountVAT3CurrencyVar" title="Tax 3 on Account, Currency" />
+                </If>
+              </If>
+              <Else>
+                <Field source="OnAccountVATCurrency" title="Tax on Account" />
+              </Else>
+            </Else>
+            <Field source="TotalCurrency" />
+          </Group>
+        </Column>
+        <Column>
+          <Group title="Workflow">
+            <Description title="Draft Created" template="^1 by ^2" arguments="DraftCreatedDateVar;DraftCreatedByVar" />
+            <Description title="Invoice Approved" template="^1 by ^2" arguments="ApprovalDateVar;ApprovedByVar" />
+            <Description title="Invoice Printed" template="^1 by ^2" arguments="PrintingDate;PrintedBy" />
+          </Group>
+          <Group title="Contact Information">
+            <Field source="PayerAttention" title="Name" />
+            <Field source="PayerElectronicMailAddress" title="E-mail" />
+            <Field source="PayerTelephone" title="Phone" />
+            <Field source="PayerTelefax" title="Fax" />
+          </Group>
+        </Column>
+        <Column>
+          <Group title="Billing Address">
+            <Reference foreignKey="PaymentCustomer_Customer" />
+            <Field source="PayerName2" title="Address" />
+            <Field source="PayerName3" title="" />
+            <ZipCity citySource="PayerPostalDistrict" zipSource="PayerZipCode" title="" />
+            <Field source="PayerAttention" title="Attn." />
+            <Field source="PayerCountry" title="Country" />
+          </Group>
+        </Column>
+      </Form>
+    </UpperPane>
+  </Layout>
+</MDML>
