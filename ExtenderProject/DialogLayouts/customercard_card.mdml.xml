@@ -28,6 +28,7 @@
             <Field source="Country" mandatory="ParentCustomer=''" />
             <Field source="Telephone" />
             <Field source="ElectronicMailAddress" />
+            <Field source="CompanyRegistrationNumber" title="Comp. Reg. No." />
           </Group>
           <Group title="Parent Customer">
             <Reference foreignKey="ParentCustomer_Customer" open="false" />
@@ -102,13 +103,8 @@
             <Field source="ContactPerson" />
             <Reference foreignKey="OurContact_Employee" title="^{fieldTitle('OurContact')}" />
             <Field source="TerminationDate" />
-          </Group>
-          <Group title="Responsible Staff">
-            <Reference foreignKey="AccountManagerNumber_Employee" />
-            <Reference foreignKey="SalesPersonNumber_Employee" />
-            <Reference foreignKey="EmployeeNumber1_Employee" title="Managing Partner" />
-            <Reference foreignKey="EmployeeNumber6_Employee" />
-            <Reference foreignKey="EmployeeNumber7_Employee" />
+            <Field source="CompanyRegistrationNumber" title="Comp. Reg. No." />
+            <Field source="CustomerPopup5" size="large" title="Invoice Delivery Method" />
           </Group>
         </Column>
         <Column>
@@ -133,7 +129,7 @@
             <Field source="SelectedOption5" size="large" title="Selected Value 5{Customer}" />
             <Field source="FiscalYearEndMonth" size="large" />
             <Field source="CustomerPopup1" size="large" title="Popup 1{Customer}" />
-            <Field source="CustomerPopup2" size="large" title="Popup 2{Customer}" />
+<!--             <Field source="CustomerPopup2" size="large" title="Popup 2{Customer}" /> -->
           </Group>
         </Column>
         <Column>
@@ -160,6 +156,13 @@
               </If>
             </Group>
           </If>
+          <Group title="Responsible Staff">
+            <Reference foreignKey="AccountManagerNumber_Employee" />
+            <Reference foreignKey="SalesPersonNumber_Employee" />
+            <Reference foreignKey="EmployeeNumber1_Employee" title="Managing Partner" />
+            <Reference foreignKey="EmployeeNumber6_Employee" />
+            <Reference foreignKey="EmployeeNumber7_Employee" />
+          </Group>
         </Column>
       </Form>
       <Form name="PriceAndBilling">

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MDML xmlns="http://www.deltek.com/ns/mdml" version="0.97">
+  <Layout name="customercard_overview" source="customercard">
+    <UpperPane>
+      <Define>
+        <Include fragment="GD_Addresses" />
+        <Trigger name="CreateCustomerTrigger">
+          <Assign source="OptionListNumber5" value="'Customer Entity'" />
+          <Assign source="OptionListNumber10" value="'NAICS'" />
+        </Trigger>
+      </Define>
+      <Wizard name="CreateCustomerWizard" title="Create Customer">
+        <Page form="CreateCustomerWizardPage1" title="Basic Information" description="Please enter the customer name" preTrigger="CreateCustomerTrigger" />
+        <If condition="ParentCustomer=''">
+          <Page form="CreateCustomerWizardPage2" title="Detailed Information" description="Please enter the following mandatory information" />
+        </If>
+      </Wizard>
+      <Form name="CreateCustomerWizardPage1">
+        <Actions all="true" />
+        <Column style="fullWidth">
+          <Group title="Customer{Debitor}">
+            <Reference foreignKey="CustomerNumber_Customer" appearance="maximized" descriptionMandatory="true" keySuggestions="none" keyShadowTitle="Number (blank for default)" />
+            <Field source="Name2" appearance="maximized" shadowTitle="Name 2" />
+            <Field source="Name3" appearance="maximized" shadowTitle="Name 3" />
+            <ZipCity citySource="PostalDistrict" zipSource="ZipCode" appearance="maximized" cityShadowTitle="Postal District" zipShadowTitle="Zip Code" />
+            <Field source="Attention" suggestions="none" />
+            <Field source="Country" mandatory="ParentCustomer=''" />
+            <Field source="Telephone" />
+            <Field source="ElectronicMailAddress" />
+            <Field source="CompanyRegistrationNumber" title="Comp. Reg. No." />
+            <Field source="CustomerPopup5" title="Invoice Delivery Method" />
+          </Group>
+          <Group title="Responsible Staff">
+            <Reference foreignKey="AccountManagerNumber_Employee" />
+            <Reference foreignKey="EmployeeNumber6_Employee" />
+            <Reference foreignKey="EmployeeNumber7_Employee" />
+            <Reference foreignKey="SalesPersonNumber_Employee" />
+          </Group>
+          <Group title="Statistics">
+            <Reference foreignKey="Specification1Name_Specification1" />
+            <Field source="SelectedOption10" size="large" />
+            <Field source="SelectedOption5" size="large" />
+            <Field source="FiscalYearEndMonth" size="large" />
+          </Group>
+        </Column>
+      </Form>
+      <Form name="CreateCustomerWizardPage2">
+        <Actions all="true" />
+        <Column>
+          <Group title="General Information">
+            <Field source="Language" mandatory="true" />
+            <Field source="DepartmentNumber" mandatory="true" />
+            <Field source="CustomerGroup" mandatory="true" />
+            <Field source="CompanyVATCode" mandatory="true" />
+            <Field source="EUTradeType" mandatory="true" />
+            <Field source="Enterprise" />
+          </Group>
+          <Group title="Payment Information">
+            <Field source="Currency" mandatory="true" />
+            <Field source="InvoiceLayout" mandatory="true" />
+            <Field source="DetailedInvoiceLayout" />
+            <Field source="CustomerPaymentMode" mandatory="true" suggestions="onDemand" />
+            <Field source="ControlAccountCode" mandatory="true" />
+            <Field source="PaymentTerms" mandatory="true" />
+            <Field source="CreditMax" title="Credit Limit" />
+            <Field source="CustomerPopup1" />
+<!--             <Field source="CustomerPopup2" /> -->
+          </Group>
+          <Group title="Delivery">
+            <Field source="InventoryNumber" mandatory="true" />
+            <Field source="DeliveryTerms" title="Delivery Terms{abbr}" mandatory="true" />
+            <Field source="DeliveryMode" mandatory="true" />
+            <Field source="Transporter" mandatory="true" />
+            <Field source="ConsignmentType" mandatory="true" />
+            <Field source="BackOrderProcessing" mandatory="true" />
+          </Group>
+        </Column>
+      </Form>
+      <Form name="CustomerHomeKPI">
+        <Column>
+          <Row>
+            <Column>
+              <Group title="Ship to Customer{Debitor}" ref="CustomerAddressFieldGroup" />
+              <Row>
+                <Group>
+                  <Field source="Attention" />
+                  <Field source="Telephone" />
+                  <Field source="ElectronicMailAddress" title="E-Mail" />
+                  <Field source="ActiveStatus" />
+                </Group>
+              </Row>
+              <If condition="not hasWorkspace('BillingCustomerHome')">
+                <Row>
+                  <Group>
+                    <Link workspace="Customers" template="More details..." title=" " appearance="maximized" icon="WorkspaceLink">
+                      <Target pane="Customers_Filter">
+                        <Restriction template="Selected Customer" expression="CustomerNumber=target.CustomerNumber" />
+                        <Focus>
+                          <Match field="CustomerNumber" value="CustomerNumber" />
+                        </Focus>
+                      </Target>
+                    </Link>
+                  </Group>
+                </Row>
+              </If>
+            </Column>
+            <Column>
+              <Group title="Bill to Customer{Debitor}" ref="CustomerAddressVarGroup" />
+              <Row>
+                <Group>
+                  <Field source="AttentionVar" title="Attn." />
+                  <Field source="TelephoneVar" title="Phone" />
+                  <Field source="ElectronicMailAddressVar" title="E-Mail" />
+                </Group>
+              </Row>
+            </Column>
+          </Row>
+        </Column>
+        <Column>
+          <If condition="maconomy:booleanSysPar('UseCustomerLevel2')">
+            <Group title="Hierarchy">
+              <If condition="Level1CustomerNumber = CustomerNumber or Level1CustomerNumber = ''">
+                <Reference title="^{Level1NameVar}" keySource="Level1CustomerNumber" descriptionSource="Level1CustomerNameVar" descriptionOpen="false" />
+              </If>
+              <Else>
+                <Link workspace="BillingCustomers" template="^1 (^2)" arguments="Level1CustomerNameVar;Level1CustomerNumber" title="^{Level1NameVar}" icon="WorkspaceLink">
+                  <Target pane="Customers_Filter">
+                    <Restriction template="Selected Customer" expression="target.CustomerNumber = Level1CustomerNumber" />
+                    <Focus>
+                      <Match field="CustomerNumber" value="Level1CustomerNumber" />
+                    </Focus>
+                  </Target>
+                </Link>
+              </Else>
+              <If condition="Level2CustomerNumber = CustomerNumber or Level2CustomerNumber = ''">
+                <Reference title="^{Level2NameVar}" keySource="Level2CustomerNumber" descriptionSource="Level2CustomerNameVar" descriptionOpen="false" />
+              </If>
+              <Else>
+                <Link workspace="BillingCustomers" template="^1 (^2)" arguments="Level2CustomerNameVar;Level2CustomerNumber" title="^{Level2NameVar}" icon="WorkspaceLink">
+                  <Target pane="Customers_Filter">
+                    <Restriction template="Selected Customer" expression="target.CustomerNumber = Level2CustomerNumber" />
+                    <Focus>
+                      <Match field="CustomerNumber" value="Level2CustomerNumber" />
+                    </Focus>
+                  </Target>
+                </Link>
+              </Else>
+              <If condition="maconomy:booleanSysPar('UseCustomerLevel3')">
+                <If condition="Level3CustomerNumber = CustomerNumber or Level3CustomerNumber = ''">
+                  <Reference title="^{Level3NameVar}" keySource="Level3CustomerNumber" descriptionSource="Level3CustomerNameVar" descriptionOpen="false" />
+                </If>
+                <Else>
+                  <Link workspace="BillingCustomers" template="^1 (^2)" arguments="Level3CustomerNameVar;Level3CustomerNumber" title="^{Level3NameVar}" icon="WorkspaceLink">
+                    <Target pane="Customers_Filter">
+                      <Restriction template="Selected Customer" expression="target.CustomerNumber = Level3CustomerNumber" />
+                      <Focus>
+                        <Match field="CustomerNumber" value="Level3CustomerNumber" />
+                      </Focus>
+                    </Target>
+                  </Link>
+                </Else>
+                <If condition="maconomy:booleanSysPar('UseCustomerLevel4')">
+                  <If condition="Level4CustomerNumber = CustomerNumber or Level4CustomerNumber = ''">
+                    <Reference title="^{Level4NameVar}" keySource="Level4CustomerNumber" descriptionSource="Level4CustomerNameVar" descriptionOpen="false" />
+                  </If>
+                  <Else>
+                    <Link workspace="BillingCustomers" template="^1 (^2)" arguments="Level4CustomerNameVar;Level4CustomerNumber" title="^{Level4NameVar}" icon="WorkspaceLink">
+                      <Target pane="Customers_Filter">
+                        <Restriction template="Selected Customer" expression="target.CustomerNumber = Level4CustomerNumber" />
+                        <Focus>
+                          <Match field="CustomerNumber" value="Level4CustomerNumber" />
+                        </Focus>
+                      </Target>
+                    </Link>
+                  </Else>
+                  <If condition="maconomy:booleanSysPar('UseCustomerLevel5')">
+                    <If condition="Level5CustomerNumber = CustomerNumber or Level5CustomerNumber = ''">
+                      <Reference title="^{Level5NameVar}" keySource="Level5CustomerNumber" descriptionSource="Level5CustomerNameVar" descriptionOpen="false" />
+                    </If>
+                    <Else>
+                      <Link workspace="BillingCustomers" template="^1 (^2)" arguments="Level5CustomerNameVar;Level5CustomerNumber" title="^{Level5NameVar}" icon="WorkspaceLink">
+                        <Target pane="Customers_Filter">
+                          <Restriction template="Selected Customer" expression="target.CustomerNumber = Level5CustomerNumber" />
+                          <Focus>
+                            <Match field="CustomerNumber" value="Level5CustomerNumber" />
+                          </Focus>
+                        </Target>
+                      </Link>
+                    </Else>
+                  </If>
+                </If>
+              </If>
+            </Group>
+          </If>
+          <Group title="Responsible Staff">
+            <Reference foreignKey="AccountManagerNumber_Employee" />
+            <Reference foreignKey="EmployeeNumber6_Employee" />
+            <Reference foreignKey="EmployeeNumber7_Employee" />
+            <Reference foreignKey="SalesPersonNumber_Employee" />
+          </Group>
+        </Column>
+        <Column>
+          <Group title="Statistics">
+            <Reference foreignKey="Specification1Name_Specification1" />
+            <Field source="SelectedOption10" size="large" />
+            <Field source="SelectedOption5" size="large" />
+            <Field source="FiscalYearEndMonth" size="large" />
+            <Field source="CustomerPopup1" size="large" />
+<!--             <Field source="CustomerPopup2" size="large" /> -->
+            <Field source="CompanyRegistrationNumber" title="Comp. Reg. No." />
+            <Field source="CustomerPopup5" size="large" title="Invoice Delivery Method" />
+          </Group>
+        </Column>
+      </Form>
+    </UpperPane>
+  </Layout>
+</MDML>
