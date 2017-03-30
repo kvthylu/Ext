@@ -41,6 +41,7 @@
             <Field source="WeekCalendarNumber" />
             <Field source="HolidayCalendarName" />
             <Field source="ActiveStatus" />
+            <Field source="Statistic2" size="large" title="Selected Value 5{Customer}" />
           </Group>
           <Group title="1099 Reporting">
             <Boolean source="Disclosable" />
@@ -52,7 +53,7 @@
             <Reference foreignKey="DocumentArchiveNumber_DocumentArchiveHeader" />
           </Group>
           <Group title="Print Control">
-            <Pair firstSource="Statistic2" secondSource="Statistic2List" firstShadowTitle="Value" secondShadowTitle="List" title="Statistics 2" />
+<!--             <Pair firstSource="Statistic2" secondSource="Statistic2List" firstShadowTitle="Value" secondShadowTitle="List" title="Statistics 2" /> -->
             <Pair firstSource="Statistic3" secondSource="Statistic3List" firstShadowTitle="Value" secondShadowTitle="List" title="Statistics 3" />
             <Pair firstSource="Statistic4" secondSource="Statistic4List" firstShadowTitle="Value" secondShadowTitle="List" title="Statistics 4" />
           </Group>
