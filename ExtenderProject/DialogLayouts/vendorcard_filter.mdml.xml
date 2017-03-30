@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MDML xmlns="http://www.deltek.com/ns/mdml" version="0.97">
+  <Layout name="vendorcard_filter" source="VendorCard">
+    <FilterPane>
+      <Filter name="VendorHomeWithAllVendorsDefault">
+        <Actions>
+          <Action source="with-&gt;VendorCard.Create" wizard="CreateVendorWizard" />
+          <Action source="mount-&gt;ImportVendors.Import" wizard="ImportWizard" disabled="false" />
+        </Actions>
+        <ControlBar>
+          <Selection default="AllVendors">
+            <Option name="MyVendors" title="My Vendors" restriction="Responsible = maconomy:userEmployeeNumber() or OurReference = maconomy:userEmployeeNumber() or OurReference = maconomy:username()" />
+            <Option name="AllVendors" title="All Vendors" />
+          </Selection>
+        </ControlBar>
+        <Compact>
+          <Description template="^1(^2)" arguments="Name1;VendorNumber" />
+        </Compact>
+        <Columns>
+          <Field source="VendorNumber" />
+          <Field source="Name1" title="Vendor Name" />
+          <Field source="Name3" title="Address" />
+          <Field source="Country" />
+          <Field source="Attention" />
+          <Field source="Telephone" />
+          <Link template="^1" arguments="ElectronicMailAddress" tooltip="Send email to vendor" url="'mailto:'+urlEncode(ElectronicMailAddress)" icon="Mail" title="Email">
+            <Override condition="ElectronicMailAddress = ''">
+              <Link template="-" icon="" disabled="true" style="justifyCenter" />
+            </Override>
+          </Link>
+          <If condition="maconomy:isSelectedOption('AllVendors')">
+            <Field source="ActiveStatus" />
+            <Field source="PaymentVendor" />
+            <Field source="ParentVendor" />
+            <Field source="Language" />
+            <Field source="Currency" />
+            <Field source="PaymentTerms" />
+            <Field source="VendorGroup" />
+          </If>
+          <Field source="RemarkText1" title="Old Vendor No." visibility="hidden" />
+        </Columns>
+      </Filter>
+    </FilterPane>
+  </Layout>
+</MDML>

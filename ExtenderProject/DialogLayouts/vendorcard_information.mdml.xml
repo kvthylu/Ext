@@ -27,6 +27,7 @@
             <Field source="Telex" />
             <Field source="Giro" />
             <Field source="ElectronicMailAddress" />
+            <Field source="RemarkText1" title="Old Vendor No." />
           </Group>
           <Group title="Settling Company">
             <Reference foreignKey="SettlingCompany_CompanyInformation" />
