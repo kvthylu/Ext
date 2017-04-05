@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MDML xmlns="http://www.deltek.com/ns/mdml" version="0.97">
+  <Layout name="expensejustification:dailytimesheetlineexpenses" source="DailyTimeSheetLineExpenses">
+    <LowerPane>
+      <Define>
+        <Function name="isExpenseJustificationMissing">
+          <Value>ExpenseJustification = '' and HasExpenseJustificationHelpTextVar</Value>
+        </Function>
+        <Style name="MissingExpenseJustification" ref="attentionField" condition="isExpenseJustificationMissing()" />
+        <Style name="MissingJustification" ref="attentionField" condition="JustificationCompleteVar = false" />
+      </Define>
+      <Table name="TableWithJustification">
+        <Actions all="true">
+          <Exclude>
+            <Move />
+            <Insert />
+          </Exclude>
+        </Actions>
+        <Columns>
+          <Field source="ExpenseSheetNumber" />
+          <Field source="EntryDate" size="small" />
+          <Field source="TaskTextVar" />
+          <Field source="Text" open="JustificationRequiredVar = false" style="MissingJustification" />
+          <Field source="Reference" size="tiny" />
+          <Field source="NumberOf" size="tiny" />
+          <UnitField source="UnitPriceCurrency" unitSource="Currency" size="small" />
+          <UnitField source="AmountCurrency" unitSource="Currency" size="small" />
+          <Field source="DocumentName" />
+        </Columns>
+      </Table>
+    </LowerPane>
+  </Layout>
+</MDML>

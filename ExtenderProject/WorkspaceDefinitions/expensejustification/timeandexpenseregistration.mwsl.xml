@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MWSL xmlns="http://www.deltek.com/ns/mwsl" version="0.23">
+  <Workspace name="expensejustification:TimeAndExpenseRegistration" title="Time &amp; Expenses">
+    <Define>
+      <Function name="isMyPlanEnabled" type="boolean">
+        <Value><![CDATA[sysPar('myPlanURL') != '']]></Value>
+      </Function>
+      <Function name="hasAnalytix" value="stringSysPar('BPMServerURL') != ''" type="boolean" />
+      <Function name="enableLongTextEmulation" type="boolean" value="isEnvVarDefined('user.employeeinfo.CompanyNumber') and isEnvVarDefined('system.parameters.EnableLongTextEmulationInWorkspaces') and maconomy:booleanSysPar('EnableLongTextEmulationInWorkspaces', stringEnvVar('user.employeeinfo.CompanyNumber'))" />
+      <Function name="peoplePlannerRole" type="boolean" value="booleanEnvVar('user.info.UseForPeoplePlanner')" />
+    </Define>
+    <Formation>
+      <Section title="Time">
+        <Mount>
+          <Card source="DailyTimeRegistration" layout="dailytimeregistration_card" title="Day" name="Time_DayCard" view="Full" hidden="enableLongTextEmulation()">
+            <Expansions parentSize="small">
+              <With>
+                <Table layout="expensejustification:dailytimeregistration" view="Full" title="Registrations">
+                  <Expansions minimized="true">
+                    <Bind foreignKey="primary">
+                      <Card source="DailyTimeSheetLines" layout="dailytimesheetlines_details" title="Details" view="Standard" />
+                    </Bind>
+                    <Bind foreignKey="primary">
+                      <Hidden source="DailyTimeSheetLineExpenses">
+                        <With>
+                          <Table layout="expensejustification:dailytimesheetlineexpenses" view="TableWithJustification">
+                            <Assistants>
+                              <Bind foreignKey="InstanceKey_NoteHeader">
+                                <Table layout="expensejustification:notes" view="Justification" source="notes" title="Justification" hidden="not parent.JustificationRequiredVar" />
+                              </Bind>
+                            </Assistants>
+                          </Table>
+                        </With>
+                      </Hidden>
+                    </Bind>
+                    <Bind foreignKey="primary">
+                      <Hidden source="DailyTimeSheetLineMileage"/>
+                    </Bind>
+                  </Expansions>
+                </Table>
+              </With>
+            </Expansions>
+          </Card>
+          <Card source="MaconomyLongText:DailyTimeRegistration" layout="Maconomy:dailytimeregistration_card" title="Day" name="Time_DayCard" view="Full" hidden="not enableLongTextEmulation()">
+            <Expansions parentSize="small">
+              <With>
+                <Table layout="expensejustification:dailytimeregistration" view="Full" title="Registrations">
+                  <Expansions minimized="true">
+                    <Bind foreignKey="primary">
+                      <Card source="DailyTimeSheetLines" layout="dailytimesheetlines_details" title="Details" view="Standard" />
+                    </Bind>
+                    <Bind foreignKey="primary">
+                      <Hidden source="DailyTimeSheetLineExpenses">
+                        <With>
+                          <Table layout="expensejustification:dailytimesheetlineexpenses" view="TableWithJustification">
+                            <Assistants>
+                              <Bind foreignKey="InstanceKey_NoteHeader">
+                                <Table layout="expensejustification:notes" view="Justification" source="notes" title="Justification" hidden="not parent.JustificationRequiredVar" />
+                              </Bind>
+                            </Assistants>
+                          </Table>
+                        </With>
+                      </Hidden>
+                    </Bind>
+                    <Bind foreignKey="primary">
+                      <Hidden source="DailyTimeSheetLineMileage"/>
+                    </Bind>
+                  </Expansions>
+                </Table>
+              </With>
+            </Expansions>
+          </Card>
+          <Card source="TimeRegistration" layout="timeregistration_card" title="Week" name="Time_WeekCard" view="Full">
+            <Expansions parentSize="small">
+              <With>
+                <Table layout="expensejustification:timeregistration" title="Registrations">
+                  <Expansions minimized="true">
+                    <Bind foreignKey="primary">
+                      <Card source="TimeRegistrationDetails" title="Descriptions" view="Descriptions" hidden="enableLongTextEmulation()" />
+                      <Card source="MaconomyLongText:TimeRegistrationDetails" title="Descriptions" view="Descriptions" hidden="not enableLongTextEmulation()" />
+                    </Bind>
+                    <Bind foreignKey="primary">
+                      <Card source="TimeRegistrationDetails" title="Details" view="Details" />
+                    </Bind>
+                    <Bind foreignKey="primary">
+                      <Hidden source="TimeSheetLineExpenses">
+                        <With>
+                          <Table layout="expensejustification:timesheetlineexpenses" view="TableWithJustification">
+                            <Assistants>
+                              <Bind foreignKey="InstanceKey_NoteHeader">
+                                <Table layout="expensejustification:notes" view="Justification" source="notes" title="Justification" hidden="not parent.JustificationRequiredVar" />
+                              </Bind>
+                            </Assistants>
+                          </Table>
+                        </With>
+                      </Hidden>
+                    </Bind>
+                    <Bind foreignKey="primary">
+                      <Hidden source="TimeSheetLineMileage">
+                        <With>
+                          <Table layout="expensejustification:timesheetlinemileage" view="TableWithJustification">
+                            <Assistants>
+                              <Bind foreignKey="CustomerNumber_Customer">
+                                <Card source="CustomerCard" view="RouteNavigation_Addresses" title="Route" hidden="hasNoSeed()" />
+                              </Bind>
+                              <Bind foreignKey="InstanceKey_NoteHeader">
+                                <Table layout="expensejustification:notes" view="Justification" source="notes" title="Justification" hidden="not parent.JustificationRequiredVar" />
+                              </Bind>
+                            </Assistants>
+                          </Table>
+                        </With>
+                      </Hidden>
+                    </Bind>
+                  </Expansions>
+                </Table>
+              </With>
+            </Expansions>
+          </Card>
+          <Card source="TimeRegistration" view="PeoplePlanner_MyPlan" hidden="not isMyPlanEnabled() or not peoplePlannerRole()" />
+        </Mount>
+      </Section>
+      <Section title="Expenses">
+        <Mount>
+          <Filter source="ExpenseSheets" name="Expense_Filter" view="Demo">
+            <Expansions minimized="false" parentSize="small">
+              <With>
+                <Card title="Expense Sheet" layout="expensesheets_card" name="Expense_Card" view="Demo(true, false)">
+                  <Expansions parentSize="small">
+                    <With>
+                      <Table layout="expensejustification:expensesheets" title="Registrations" name="Expense_Table" view="TableWithJustificationAndReadWritePar(true, false)">
+                        <Expansions minimized="true">
+                          <Bind foreignKey="primary">
+                            <Card source="ExpenseSheetLines" title="Details" view="Demo" />
+                          </Bind>
+                          <Bind foreignKey="TimeSheetLineInstanceKey_TimeSheetLine">
+                            <Card source="TimeRegistrationDetails" view="AssociatedLine" title="Time Sheet Line" hidden="enableLongTextEmulation() or parent.TimeSheetLineInstanceKey = ''" />
+                            <Card source="MaconomyLongText:TimeRegistrationDetails" layout="Maconomy:TimeRegistrationDetails" view="AssociatedLine" title="Time Sheet Line" hidden="not enableLongTextEmulation() or parent.TimeSheetLineInstanceKey = ''" />
+                          </Bind>
+                        </Expansions>
+                        <Assistants>
+                          <Bind foreignKey="InstanceKey_NoteHeader">
+                            <Table layout="expensejustification:notes" view="Justification" source="notes" title="Justification" hidden="not parent.JustificationRequiredVar" />
+                          </Bind>
+                        </Assistants>
+                      </Table>
+                    </With>
+                    <Bind foreignKey="DocumentArchiveNumber_DocumentArchiveHeader">
+                      <Table source="DocumentArchives" view="AttachDocument_From_ExpenseSheet" title="Documents">
+                        <Expansions minimized="true">
+                          <Bind foreignKey="primary">
+                            <Table source="DocumentRevisions" view="Full" />
+                          </Bind>
+                        </Expansions>
+                      </Table>
+                    </Bind>
+                  </Expansions>
+                </Card>
+              </With>
+            </Expansions>
+          </Filter>
+        </Mount>
+      </Section>
+      <Section title="Favorites">
+        <Mount>
+          <Hidden source="JobFavorites">
+            <With>
+              <Table view="Demo" title="List of Favorites">
+                <Expansions minimized="true">
+                  <Bind foreignKey="primary">
+                    <Hidden source="JobFavorite" />
+                  </Bind>
+                </Expansions>
+              </Table>
+            </With>
+          </Hidden>
+        </Mount>
+      </Section>
+      <Section title="Reports" hidden="not hasAnalytix()">
+        <Mount>
+          <Card source="ReportCriteria" view="Analytix_EmployeeTimeOverview_Embedded" title="Employee Time Overview" name="EmployeeTimeOverview" />
+          <Card source="ReportCriteria" view="Analytix_Realization_Embedded" title="Realization" name="Realization" />
+          <Card source="ReportCriteria" view="Analytix_RealizationByEmployee_Embedded" title="Realization, by Employee" name="Realization" />
+          <Card source="ReportCriteria" view="Analytix_Utilization_Embedded" title="Utilization" name="Utilization" />
+          <Card source="ReportCriteria" view="Analytix_UtilizationByEmployee_Embedded" title="Utilization, by Employee" name="Utilization" />
+        </Mount>
+      </Section>
+    </Formation>
+  </Workspace>
+</MWSL>

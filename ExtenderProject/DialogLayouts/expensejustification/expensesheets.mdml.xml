@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MDML xmlns="http://www.deltek.com/ns/mdml" version="0.97">
+  <Layout name="expensejustification:expensesheets" source="ExpenseSheets">
+    <LowerPane>
+      <Define>
+        <Include fragment="GD_Dimensions" />
+        <Style name="MissingJob" ref="attentionField" condition="LineDetailsTypeVar = LineDetailsTypeType'Job" />
+        <Style name="MissingTask" ref="attentionField" condition="LineDetailsTypeVar = LineDetailsTypeType'Task" />
+        <Style name="MissingExpenseJustification" ref="attentionField" condition="LineDetailsTypeVar = LineDetailsTypeType'\Expense justification\" />
+        <Style name="LineNotOK" ref="attentionField" condition="LineDetailsTypeVar != LineDetailsTypeType'OK" />
+        <Style name="MissingJustification" ref="attentionField" condition="JustificationCompleteVar = false" />
+        <Style name="hours" zeroSuppression="true" size="tiny" />
+      </Define>
+      <Table name="TableWithJustification">
+        <Actions all="true" />
+        <Columns>
+          <Field source="EntryDate" title="Entry Date{abbr}" />
+          <Field source="Favorite" searchView="FilterFollowEntryDate" />
+          <Field source="JobNumber" />
+          <Field source="ActivityNumber" title="Act. No." />
+          <Field source="TransactionType" />
+          <Field source="Text" open="JustificationRequiredVar = false" style="MissingJustification" />
+          <Field source="NumberOf" />
+          <Field source="UnitPriceCurrency" />
+          <Field source="AmountCurrency" />
+          <If condition="booleanSysPar('UseMultipleVATLevels')">
+            <Field source="FinanceVATCode" name="UseMultipleVATLevels_FinanceVATCode" />
+            <Field source="FinanceVATCode2" />
+            <If condition="booleanSysPar('ShowThreeVATLevels')">
+              <Field source="FinanceVATCode3" />
+            </If>
+            <Field source="VATCurrency" title="Tax Total, Currency" name="UseMultipleVATLevels_VATCurrency" />
+            <Field source="VAT1Currency" />
+            <Field source="VAT2Currency" />
+            <If condition="booleanSysPar('ShowThreeVATLevels')">
+              <Field source="VAT3Currency" />
+            </If>
+          </If>
+          <Else>
+            <Field source="FinanceVATCode" title="Tax Code" name="NotUseMultipleVATLevels_FinanceVATCode" />
+            <Field source="VATCurrency" name="NotUseMultipleVATLevels_VATCurrency" />
+          </Else>
+          <Field source="Currency" />
+          <Field source="ExchangeRate" />
+          <Field source="TaskName" />
+          <Columns ref="DimensionColumns" />
+          <Field source="ApprovalStatus" />
+          <Field source="ApprovedOrRejectedBy" />
+          <Field source="ApprovalDate" />
+          <Field source="CommentProjectManager" />
+          <Field source="JobNameVar" title="Job Name" />
+          <Field source="ActivityTextVar" title="Activity Name" />
+          <Field source="TaskNameVar" title="Task Description{1}" />
+          <Field source="TaskPathVar" title="Task Path" />
+          <Field source="UnitPriceBase" />
+          <Field source="AmountBase" />
+          <If condition="booleanSysPar('UseMultipleVATLevels')">
+            <Field source="VATBase" title="Tax Total, Base" name="UseMultipleVATlevels_VATBase" />
+            <Field source="VAT1Base" />
+            <Field source="VAT2Base" />
+            <If condition="booleanSysPar('ShowThreeVATLevels')">
+              <Field source="VAT3Base" />
+            </If>
+          </If>
+          <Else>
+            <Field source="VATBase" name="NotUseMultipleVATLevels_VATBase" />
+          </Else>
+          <Field source="Reference" />
+          <Field source="StartingDate" />
+          <Field source="StartingTime" />
+          <Field source="EndingDate" />
+          <Field source="ClosingTime" />
+          <Field source="Invoiceable" />
+          <Field source="ExpenseJustificationHelpTextVar" />
+          <Field source="ExpenseJustification" />
+          <Field source="Remark1" />
+          <Field source="Remark2" />
+          <Field source="Remark3" />
+          <Field source="QuantityA" />
+          <Field source="QuantityB" />
+          <Field source="DocumentName" />
+          <Field source="CustomerNumberVar" title="Customer No." />
+          <Field source="CustomerNameVar" title="Customer Name" />
+          <If condition="maconomy:booleanSysPar('UseCustomerLevel2')">
+            <Field source="Level1CustomerNameVar" title="^{parent.Level1TitleNameVar}" />
+            <Field source="Level2CustomerNameVar" title="^{parent.Level2TitleNameVar}" />
+            <If condition="maconomy:booleanSysPar('UseCustomerLevel3')">
+              <Field source="Level3CustomerNameVar" title="^{parent.Level3TitleNameVar}" />
+              <If condition="maconomy:booleanSysPar('UseCustomerLevel4')">
+                <Field source="Level4CustomerNameVar" title="^{parent.Level4TitleNameVar}" />
+                <If condition="maconomy:booleanSysPar('UseCustomerLevel5')">
+                  <Field source="Level5CustomerNameVar" title="^{parent.Level5TitleNameVar}" />
+                </If>
+              </If>
+            </If>
+          </If>
+          <Field source="LanguageVar" title="Language" />
+          <Field source="LineDetailsVar" title="Details" />
+          <If condition="parent.EmployeeSubcontractorNumberVar != ''">
+            <Field source="PurchaseOrderNumber" searchView="ExpenseSheet" />
+            <Field source="PurchaseOrderLineNumber" searchView="ExpenseSheet" />
+          </If>
+        </Columns>
+      </Table>
+      <Table name="TableWithJustificationAndReadWritePar">
+        <Parameters>
+          <Parameter name="ReadWritePar" type="boolean" />
+          <Parameter name="inEntryOriginContextPar" type="boolean" />
+        </Parameters>
+        <Actions all="ReadWritePar">
+          <Print />
+          <PrintThis />
+          <Action source="ShowDocument" />
+        </Actions>
+        <Columns>
+          <Style ref="highlightRow" condition="inEntryOriginContextPar and InstanceKey=Parent.Parent.OriginLineInstanceKey" />
+          <Field source="EntryDate" size="small" />
+          <Field source="Favorite" searchView="FilterFollowEntryDate" />
+          <If condition="isSolutionPropertyEnabled('ShowJobNumberWithJobName')">
+            <Field source="JobNumber" style="MissingJob" />
+          </If>
+          <Field source="JobNameVar" title="Job Name" style="MissingJob" />
+          <Field source="CustomerNameVar" title="Customer Name" />
+          <Field source="TaskNameVar" style="MissingTask" />
+          <Field source="Text" open="JustificationRequiredVar = false" style="MissingJustification" />
+          <Field source="Reference" size="tiny" />
+          <Field source="NumberOf" size="tiny" />
+          <UnitField source="UnitPriceCurrency" unitSource="Currency" size="small" />
+          <UnitField source="AmountCurrency" unitSource="Currency" size="small" />
+        </Columns>
+      </Table>
+      <Table name="ApproveExpenseSheetsWithJustification">
+        <Actions>
+          <Action source="ShowDocument" />
+        </Actions>
+        <Columns>
+          <Field source="EntryDate" title="Entry Date{abbr}" />
+          <Field source="Favorite" searchView="FilterFollowEntryDate" />
+          <Field source="JobNumber" />
+          <Field source="ActivityNumber" title="Act. No." />
+          <Field source="TransactionType" />
+          <Field source="Text" style="MissingJustification" />
+          <Field source="NumberOf" />
+          <Field source="UnitPriceCurrency" />
+          <Field source="AmountCurrency" />
+          <If condition="booleanSysPar('UseMultipleVATLevels')">
+            <Field source="FinanceVATCode" name="UseMultipleVATLevels_FinanceVATCode" />
+            <Field source="FinanceVATCode2" />
+            <If condition="booleanSysPar('ShowThreeVATLevels')">
+              <Field source="FinanceVATCode3" />
+            </If>
+            <Field source="VATCurrency" title="Tax Total, Currency" name="UseMultipleVATLevels_VATCurrency" />
+            <Field source="VAT1Currency" />
+            <Field source="VAT2Currency" />
+            <If condition="booleanSysPar('ShowThreeVATLevels')">
+              <Field source="VAT3Currency" />
+            </If>
+          </If>
+          <Else>
+            <Field source="FinanceVATCode" title="Tax Code" name="NotUseMultipleVATLevels_FinanceVATCode" />
+            <Field source="VATCurrency" name="NotUseMultipleVATLevels_VATCurrency" />
+          </Else>
+          <Field source="Currency" />
+          <Field source="ExchangeRate" />
+          <Field source="TaskName" />
+          <Columns ref="DimensionColumns" />
+          <Field source="ApprovalStatus" />
+          <Field source="ApprovedOrRejectedBy" />
+          <Field source="ApprovalDate" />
+          <Field source="CommentProjectManager" />
+          <Field source="JobNameVar" title="Job Name" />
+          <Field source="ActivityTextVar" title="Activity Name" />
+          <Field source="TaskNameVar" title="Task Description{1}" />
+          <Field source="TaskPathVar" title="Task Path" />
+          <Field source="UnitPriceBase" />
+          <Field source="AmountBase" />
+          <If condition="booleanSysPar('UseMultipleVATLevels')">
+            <Field source="VATBase" title="Tax Total, Base" name="UseMultipleVATlevels_VATBase" />
+            <Field source="VAT1Base" />
+            <Field source="VAT2Base" />
+            <If condition="booleanSysPar('ShowThreeVATLevels')">
+              <Field source="VAT3Base" />
+            </If>
+          </If>
+          <Else>
+            <Field source="VATBase" name="NotUseMultipleVATLevels_VATBase" />
+          </Else>
+          <Field source="Reference" />
+          <Field source="StartingDate" />
+          <Field source="StartingTime" />
+          <Field source="EndingDate" />
+          <Field source="ClosingTime" />
+          <Field source="Invoiceable" />
+          <Field source="ExpenseJustificationHelpTextVar" />
+          <Field source="ExpenseJustification" />
+          <Field source="Remark1" />
+          <Field source="Remark2" />
+          <Field source="Remark3" />
+          <Field source="QuantityA" />
+          <Field source="QuantityB" />
+          <Field source="DocumentName" />
+          <Field source="CustomerNumberVar" title="Customer No." />
+          <Field source="CustomerNameVar" title="Customer Name" />
+          <Field source="LanguageVar" title="Language" />
+          <Field source="LineDetailsVar" title="Details" />
+          <If condition="parent.EmployeeSubcontractorNumberVar != ''">
+            <Field source="PurchaseOrderNumber" searchView="ExpenseSheet" />
+            <Field source="PurchaseOrderLineNumber" searchView="ExpenseSheet" />
+          </If>
+        </Columns>
+      </Table>
+    </LowerPane>
+  </Layout>
+</MDML>

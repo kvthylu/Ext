@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MDML xmlns="http://www.deltek.com/ns/mdml" version="0.97">
+  <Layout name="expensejustification:DailyTimeRegistration" source="DailyTimeRegistration">
+    <LowerPane>
+      <Define>
+        <Style name="DailyDescription" ref="attentionField" condition="UsesDailyDescriptionsVar and NumberOf != 0 and DailyDescription = ''" />
+        <Style name="LongDailyDescription" ref="attentionField" condition="UsesDailyDescriptionsVar and NumberOf != 0 and LongDescriptionDay = ''" />
+        <Style name="MissingJob" ref="attentionField" condition="LineDetailsTypeVar = LineDetailsTypeType'Job" />
+        <Style name="MissingTask" ref="attentionField" condition="LineDetailsTypeVar = LineDetailsTypeType'Task" />
+        <Style name="LineNotOK" ref="attentionField" condition="LineDetailsTypeVar != LineDetailsTypeType'OK" />
+        <Style name="hours" zeroSuppression="true" size="small" />
+        <Function name="enableLongTextEmulation" type="boolean" value="isEnvVarDefined('user.employeeinfo.CompanyNumber') and maconomy:booleanSysPar('EnableLongTextEmulationInWorkspaces', stringEnvVar('user.employeeinfo.CompanyNumber'))" />
+      </Define>
+      <Table name="Full">
+        <Actions all="true">
+          <If condition="hasWorkspace('expensejustification:TimeAndExpenseRegistration') and booleanSysPar('AllowIncompleteExpenseAndMileageRegistrations') and not inCreate()">
+            <If condition="parent.NumberOfExpenseSheetsVar = 0">
+              <Action source="primary-&gt;DailyTimeSheetLineExpenses.Expense" title="Expense" wizard="NewExpenseSheetWizard" disabled="EmployeeNumber = '' defaultTo true" />
+            </If>
+            <ElseIf condition="parent.NumberOfExpenseSheetsVar = 1">
+              <Action source="primary-&gt;DailyTimeSheetLineExpenses.Expense" title="Expense" disabled="EmployeeNumber = '' defaultTo true" />
+            </ElseIf>
+            <Else>
+              <Action source="primary-&gt;DailyTimeSheetLineExpenses.Expense" title="Expense" wizard="ChooseExpenseSheetWizard" disabled="EmployeeNumber = '' defaultTo true" />
+            </Else>
+          </If>
+        </Actions>
+        <Columns>
+          <Style ref="calendarTimeRejected" condition="WeekLineApprovalStatusVar = ApprovalStatusType'Rejected" />
+          <Field source="PermanentLine" title="Keep" size="tiny" />
+          <Field source="Favorite" size="large" searchView="FilterFollowDailyTimePeriod" />
+          <Field source="CustomerNameVar" size="medium" />
+          <If condition="isSolutionPropertyEnabled('ShowJobNumberWithJobName')">
+            <Field source="JobNumber" style="MissingJob" />
+          </If>
+          <Field source="JobNameVar" title="Job Name" style="MissingJob" />
+          <Field source="TaskDescriptionVar" style="MissingTask" />
+          <If condition="enableLongTextEmulation()">
+            <Field source="LongDescriptionDay" title="Description" style="LongDailyDescription" />
+          </If>
+          <Else>
+            <Field source="DailyDescription" title="Description" style="DailyDescription" />
+          </Else>
+          <If condition="maconomy:booleanSysPar('@RejectRegOnAmountActivitiesOnTimeSheets')">
+            <If condition="parent.TimeRegistrationUnitVar = TimeRegistrationUnitType'Hours">
+              <Field source="NumberOf" title="Hours" style="hours" name="HoursRejectRegOnAmountActivitiesOnTimeSheets_NumberOf" />
+            </If>
+            <Else>
+              <Field source="NumberOf" title="Days" style="hours" name="RejectRegOnAmountActivitiesOnTimeSheets_NumberOf" type="real" />
+            </Else>
+          </If>
+          <Else>
+            <Field source="NumberOf" title="Quantity{Number}" name="NotRejectRegOnAmountActivitiesOnTimeSheets_NumberOf" type="real" />
+          </Else>
+          <Field source="Invoiceable" />
+        </Columns>
+      </Table>
+    </LowerPane>
+  </Layout>
+</MDML>
