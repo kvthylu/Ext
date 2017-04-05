@@ -55,6 +55,7 @@
             <Reference foreignKey="ProjectManagerNumber_Employee" />
 <!--             <Reference foreignKey="LocationName_Location" keyShadowTitle="Name" descriptionShadowTitle="Description" /> -->
             <Reference foreignKey="Specification2Name_Specification2" keyShadowTitle="Name" descriptionShadowTitle="Description" />
+            <Reference foreignKey="Specification4Name_Specification4" keyShadowTitle="Name" descriptionShadowTitle="Description" />
             <Field source="LocalSpec1Name" />
             <If condition="TemplateJobNumber = ''">
               <Field source="JobGroup" />
@@ -116,6 +117,7 @@
             <Reference foreignKey="JobNumber_JobHeader" />
             <Reference foreignKey="CustomerNumber_Customer" keySource="CustomerNumber" descriptionSource="Name1" />
             <Field source="InvoiceName" />
+            <Field source="Text1" title="Old. No." open="false"/>
             <Link workspace="Customers" template="Customer details..." title="" icon="WorkspaceLink">
               <Style anchor="both" />
               <Target pane="Customers_Filter">
@@ -141,13 +143,13 @@
             <Reference foreignKey="ProjectName_Project" />
             <Reference foreignKey="Specification1Name_Specification1" />
             <Reference foreignKey="Specification2Name_Specification2" />
+            <Reference foreignKey="Specification4Name_Specification4" title="Managing Partner"/>
             <Field source="LocalSpec1Name" size="medium" />
           </Group>
           <Group title="Responsible Staff">
             <Reference foreignKey="SalesPersonNumber_Employee" />
             <Reference foreignKey="AccountManagerNumber_Employee" />
             <Reference foreignKey="ProjectManagerNumber_Employee" />
-            <Reference foreignKey="EmployeeNumber1_Employee" title="Managing Partner"/>
             <Reference foreignKey="EmployeeNumber6_Employee" />
             <Reference foreignKey="EmployeeNumber7_Employee" />
           </Group>
@@ -159,6 +161,7 @@
             <Field source="TaskList" size="medium" />
             <Field source="InvoiceLayout" size="medium" />
             <Field source="DetailedInvoiceLayout" size="medium" />
+            <Field source="CustomerPopup5" size="medium" title="Invoice Delivery Method" />
             <Field source="JobInvoiceableVar" size="medium" />
             <Field source="InvoiceTextListName" title="Standard Text" size="medium" />
             <Field source="Text1" title="PO Number" size="medium" />
