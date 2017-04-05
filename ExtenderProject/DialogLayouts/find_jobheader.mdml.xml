@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MDML xmlns="http://www.deltek.com/ns/mdml" version="0.97">
+  <Layout source="Find_JobHeader">
+    <FilterPane>
+      <Filter name="Standard">
+        <ControlBar>
+          <Selection default="MyJobs">
+            <Option title="My Jobs" name="MyJobs" restriction="ProjectManagerNumber = UserEmployeeNumber()" />
+            <Option title="Department Jobs" name="DepartmentJobs" restriction="if (UserEmployeeNumber() != '') then (LocationName = stringEnvVar('user.employeeinfo.EntityName') and Template = false) else false" />
+            <Option title="All Jobs" name="AllJobs" />
+          </Selection>
+        </ControlBar>
+        <Compact>
+          <Columns>
+            <Field source="CustomerNumber" />
+            <Field source="Name1" title="Customer Name" size="large" />
+            <Field source="JobNumber" />
+            <Field source="JobName" size="large" />
+          </Columns>
+        </Compact>
+        <Columns>
+          <Field source="JobNumber" />
+          <Field source="JobName" />
+          <Field source="CustomerNumber" />
+          <Field source="Name1" title="Customer Name" />
+          <Field source="ProjectManagerName" title="Project Manager" />
+          <Field source="Responsible" />
+          <Field source="CompanyNumber" />
+          <Field source="MainJobNumber" />
+          <Field source="JobGroup" />
+        </Columns>
+      </Filter>
+      <Filter name="For_JobCollection">
+        <Columns>
+          <Field source="JobNumber" />
+          <Field source="JobName" />
+          <Field source="JobCollectionNumber" />
+          <Field source="OnAccountNetCurrency" />
+          <Field source="ProjectManagerName" title="Project Manager" />
+        </Columns>
+      </Filter>
+      <Filter name="For_JobJournal">
+        <ControlBar>
+          <Selection default="AllJobs">
+            <Option title="My Jobs" name="MyJobs" restriction="ProjectManagerNumber = UserEmployeeNumber()" />
+            <Option title="Department Jobs" name="DepartmentJobs" restriction="if (UserEmployeeNumber() != '') then (LocationName = stringEnvVar('user.employeeinfo.EntityName') and Template = false) else false" />
+            <Option title="All Jobs" name="AllJobs" />
+          </Selection>
+        </ControlBar>
+        <Compact>
+          <Columns>
+            <Field source="JobNumber" />
+            <Field source="JobName" size="large" />
+            <Field source="Name1" title="Customer Name" size="large" />
+          </Columns>
+        </Compact>
+        <Columns>
+          <Field source="JobNumber" />
+          <Field source="JobName" />
+          <Field source="CustomerNumber" />
+          <Field source="Name1" title="Customer Name" />
+          <Field source="ProjectManagerName" title="Project Manager" />
+          <Field source="Responsible" />
+          <Field source="CompanyNumber" />
+          <Field source="MainJobNumber" />
+          <Field source="JobGroup" />
+        </Columns>
+      </Filter>
+      <Filter name="For_TimeRegistration">
+        <ControlBar>
+          <Selection default="MyJobs" restriction="not BlockedForTimeRegistrations or not maconomy:booleanSysPar('@RejectRegOnAmountActivitiesOnTimeSheets')">
+            <Option title="My Jobs" name="MyJobs" restriction="ProjectManagerNumber = UserEmployeeNumber()" />
+            <Option title="Department Jobs" name="DepartmentJobs" restriction="if (UserEmployeeNumber() != '') then (LocationName = stringEnvVar('user.employeeinfo.EntityName') and Template = false) else false" />
+            <Option title="All Jobs" name="AllJobs" />
+          </Selection>
+        </ControlBar>
+        <Compact>
+          <Columns>
+            <Field source="JobNumber" />
+            <Field source="JobName" size="large" />
+            <Field source="Name1" title="Customer Name" size="large" />
+          </Columns>
+        </Compact>
+        <Columns>
+          <Field source="JobNumber" />
+          <Field source="JobName" />
+          <Field source="CustomerNumber" />
+          <Field source="Name1" title="Customer Name" />
+          <Field source="ProjectManagerName" title="Project Manager" />
+          <Field source="Responsible" />
+          <Field source="CompanyNumber" />
+          <Field source="MainJobNumber" />
+          <Field source="JobGroup" />
+        </Columns>
+      </Filter>
+      <Filter name="TemplateJobSelection">
+        <Compact>
+          <Columns>
+            <Field source="JobNumber" />
+            <Field source="JobName" size="large" />
+            <Field source="Name1" title="Customer Name" size="large" />
+          </Columns>
+        </Compact>
+        <Columns>
+          <Field source="JobNumber" />
+          <Field source="JobName" />
+          <Field source="CustomerNumber" />
+          <Field source="Name1" title="Customer Name" />
+          <Field source="CompanyNumber" />
+          <Field source="MainJobNumber" />
+          <Field source="JobGroup" />
+        </Columns>
+      </Filter>
+      <Filter name="ExcludeTemplateJobs">
+        <ControlBar>
+          <Selection default="MyJobs" restriction="Template = false">
+            <Option title="My Jobs" name="MyJobs" restriction="ProjectManagerNumber = UserEmployeeNumber()" />
+            <Option title="Department Jobs" name="DepartmentJobs" restriction="if (UserEmployeeNumber() != '') then (LocationName = stringEnvVar('user.employeeinfo.EntityName') and Template = false) else false" />
+            <Option title="All Jobs" name="AllJobs" />
+          </Selection>
+        </ControlBar>
+        <Compact>
+          <Columns>
+            <Field source="JobNumber" />
+            <Field source="JobName" size="large" />
+            <Field source="Name1" title="Customer Name" size="large" />
+          </Columns>
+        </Compact>
+        <Columns>
+          <Field source="JobNumber" />
+          <Field source="JobName" />
+          <Field source="CustomerNumber" />
+          <Field source="Name1" title="Customer Name" />
+          <Field source="ProjectManagerName" title="Project Manager" />
+          <Field source="Responsible" />
+          <Field source="CompanyNumber" />
+          <Field source="MainJobNumber" />
+          <Field source="JobGroup" />
+        </Columns>
+      </Filter>
+    </FilterPane>
+  </Layout>
+</MDML>
