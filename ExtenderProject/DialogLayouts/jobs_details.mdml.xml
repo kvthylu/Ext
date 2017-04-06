@@ -176,7 +176,8 @@
         </Column>
         <Column>
           <Group title="Service Description">
-            <Range firstSource="StartingDate" lastSource="ExpectedEndingDate" title="Start and Ending" size="small" />
+<!--             <Range firstSource="StartingDate" lastSource="ExpectedEndingDate" title="Start and Ending" size="small" /> -->
+            <Range firstSource="StartingDate" lastSource="WorkCompletedDate" title="Start and Ending" size="small" />
             <Field source="Description1" appearance="maximized" />
           </Group>
           <Group title="Job Restrictions">
