@@ -105,12 +105,14 @@
         <Workspace source="FinanceBudgets" title="Budget" />
       </Group>
     </If>
-    <If condition="hasRole('Controller') or hasRole('Finance AR') or hasRole('System Administrator')">
+    <If condition="hasRole('Controller') or hasRole('Finance AR') or hasRole('Credit Control') or hasRole('System Administrator')">
       <Group title="Accounts Receivable" icon="AccountsReceivable">
-        <If condition="hasRole('Finance AR')">
-          <Workspace title="AR Transactions" source="CustomerPayments" />
-          <Workspace title="AR Lookups" source="DetailedCustomerEntries" />
-          <Workspace title="AR Setup" source="ARSetup" />
+        <If condition="hasRole('Controller') or hasRole('Finance AR') or hasRole('System Administrator')">
+	        <Workspace title="AR Transactions" source="CustomerPayments" />
+	        <Workspace title="AR Lookups" source="DetailedCustomerEntries" />
+	        <Workspace title="AR Setup" source="ARSetup" />
+        </If>
+        <If condition="hasRole('Credit Control') or hasRole('System Administrator')">
           <If condition="isEnvVarDefined('user.employeeinfo.CompanyNumber') and maconomy:booleanSysPar('EnableStandardExtensions', stringEnvVar('user.employeeinfo.CompanyNumber'))">
             <Workspace source="creditcontrol:CreditControl" title="Credit Control" />
             <Workspace source="creditcontrol:CreditControlSetup" title="Credit Control Setup" />
