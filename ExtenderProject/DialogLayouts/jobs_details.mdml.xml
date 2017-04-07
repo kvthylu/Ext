@@ -164,7 +164,7 @@
             <Field source="CustomerPopup5" size="medium" title="Invoice Delivery Method" />
             <Field source="JobInvoiceableVar" size="medium" />
             <Field source="InvoiceTextListName" title="Standard Text" size="medium" />
-            <Field source="Text1" title="PO Number" size="medium" />
+            <Field source="Text2" title="PO Number" size="medium" />
             <Field source="TheYear" size="medium" />
           </Group>
           <Group title="Job Fee">
