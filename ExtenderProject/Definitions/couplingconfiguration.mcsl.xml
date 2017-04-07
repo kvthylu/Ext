@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MCSL xmlns="http://www.deltek.com/ns/mcsl" version="0.5">
+  <Access>
+    <AllRoles>
+      <Access all="true" />
+    </AllRoles>
+  </Access>
+  <Environment>
+    <Define>
+      <Fields name="CommonSystemParameters">
+        <Field source="InternalName" />
+        <Field source="Boolean1" />
+        <Field source="Integer1" />
+        <Field source="Real1" />
+        <Field source="Amount1" />
+        <Field source="String1" />
+        <Field source="Date1" />
+        <Field source="Remark1" />
+        <Field source="Remark2" />
+        <Field source="Remark3" />
+        <Field source="CreatedBy" />
+        <Field source="CreatedDate" />
+        <Field source="ChangedBy" />
+        <Field source="ChangedDate" />
+        <Field source="VersionNumber" />
+        <Field source="InstanceKey" />
+        <Field source="TransactionTimestamp" />
+      </Fields>
+      <Fields name="CommonDerivedDimensionsValues">
+        <Field source="CompanyNumber" />
+        <Field source="AccountNumber" />
+        <Field source="LocationName" />
+        <Field source="EntityName" />
+        <Field source="ProjectName" />
+        <Field source="PurposeName" />
+        <Field source="Specification1Name" />
+        <Field source="Specification2Name" />
+        <Field source="Specification3Name" />
+        <Field source="Specification4Name" />
+        <Field source="Specification5Name" />
+        <Field source="Specification6Name" />
+        <Field source="Specification7Name" />
+        <Field source="Specification8Name" />
+        <Field source="Specification9Name" />
+        <Field source="Specification10Name" />
+        <Field source="LocalSpec1Name" />
+        <Field source="LocalSpec2Name" />
+        <Field source="LocalSpec3Name" />
+        <Field source="LocalSpec4Name" />
+        <Field source="LocalSpec5Name" />
+        <Field source="LocalSpec6Name" />
+        <Field source="LocalSpec7Name" />
+        <Field source="LocalSpec8Name" />
+        <Field source="LocalSpec9Name" />
+        <Field source="LocalSpec10Name" />
+      </Fields>
+    </Define>
+    <Binding entity="EnvironmentUniverses::CompanyEnvironmentU" namespace="company:info">
+      <Restriction condition="NameOfUser = userName()" />
+      <Fields>
+        <Field source="TheNumber" />
+        <Field source="Name1" />
+        <Field source="Name2" />
+        <Field source="Name3" />
+        <Field source="Name4" />
+        <Field source="Name5" />
+        <Field source="ZipCode" />
+        <Field source="PostalDistrict" />
+        <Field source="Country" />
+        <Field source="CompanyRegistrationNumber" />
+        <Field source="CompanyNumber" />
+        <Field source="Country" />
+        <Field source="Blocked" />
+        <Field source="Currency" />
+        <Field source="CreatedDate" />
+        <Field source="AccrualToOpenEntry" />
+      </Fields>
+    </Binding>
+    <Binding entity="UserInformation" namespace="user:info">
+      <Restriction condition="NameOfUser = userName()" />
+      <Fields>
+        <Field source="EmployeeNumber" />
+        <Field source="NameOfUser" />
+        <Field source="IsAdministrator" />
+        <Field source="EncrypedAccessCode" />
+      </Fields>
+    </Binding>
+    <Binding entity="UserRoleInformation" namespace="user:info">
+      <Restriction condition="NameOfUser = userName() and NameOfRole = userRole()" />
+      <Fields>
+        <Field source="NameOfRole" />
+        <Field source="UseForPeoplePlanner" />
+        <Field source="NetworkUserName" />
+        <Field source="NetworkDomainName" />
+        <Fields ref="CommonDerivedDimensionsValues" />
+      </Fields>
+    </Binding>
+    <Binding entity="UserRoleInformation" namespace="user:roles">
+      <Restriction condition="NameOfUser = userName()" />
+      <Fields>
+        <Field source="NameOfRole" />
+        <Field source="InstanceKey" />
+      </Fields>
+    </Binding>
+    <Binding entity="UserRoleActionInformation" namespace="user:info">
+      <Restriction condition="NameOfUser = userName() and NameOfRole = userRole()" />
+      <Fields>
+        <Field source="AccessToAllTimeSheets" />
+        <Field source="CanSeeAllExpenseSheets" />
+        <Field source="CanChangeAllTimeSheets" />
+        <Field source="CanTransferTimeSheets" />
+        <Field source="CanReadCostPriceForTime" />
+        <Field source="CanChangeCostPriceForTime" />
+        <Field source="CanWriteInvoice" />
+      </Fields>
+    </Binding>
+    <Binding entity="UserDialogGroup" namespace="user:groups">
+      <Restriction condition="NameOfUser = userName() and NameOfRole = userRole()" />
+      <Fields>
+        <Field source="GroupName" />
+      </Fields>
+    </Binding>
+    <Binding entity="EnvironmentUniverses::EmployeeEnvironmentU" namespace="user:employeeinfo">
+      <Restriction condition="NameOfUser = userName()" />
+      <Fields>
+        <Fields ref="CommonDerivedDimensionsValues" />
+        <Field source="EntityName" />
+        <Field source="DepartmentNumber" />
+        <Field source="EmployeeType" />
+        <Field source="Name1" />
+        <Field source="Name2" />
+        <Field source="Name3" />
+        <Field source="Name4" />
+        <Field source="Name5" />
+        <Field source="ZipCode" />
+        <Field source="PostalDistrict" />
+        <Field source="Country" />
+        <Field source="ElectronicMailAddress" />
+        <Field source="Telephone" />
+        <Field source="Telephone2" />
+        <Field source="MobilePhone" />
+        <Field source="MobilePhone2" />
+      </Fields>
+    </Binding>
+    <Binding entity="SystemInformation" namespace="system:info">
+      <Fields>
+        <Field source="EnterpriseExchangeRateTable" />
+        <Field source="ShowSubscriptionSalesOrders" />
+      </Fields>
+    </Binding>
+    <!-- This block of fields is used to configure certain part of the workspaces. Depending on the configuration
+				 tabs and sections will be hidden -->
+    <Binding namespace="solutionconfiguration">
+      <Fields>
+        <Field name="UseJobPlanning" value="false" />
+        <Field name="ShowJobCardInJobHome" value="false" />
+        <Field name="UseJobPhases" value="false" />
+        <Field name="UseJobEvents" value="false" />
+        <Field name="UseJobQuotes" value="true" />
+        <Field name="UseJobForecasting" value="true" />
+        <Field name="UsePeriodicJobBudgets" value="true" />
+        <Field name="UseJobProgress" value="true" />
+        <Field name="ShowJobEmployeesInJobHome" value="true" />
+        <Field name="ShowJobNumberWithJobName" value="false" />
+        <Field name="IsCPASolution" value="true" />
+        <Field name="UseCustomerTaxReturns" value="true" />
+      </Fields>
+    </Binding>
+    <!-- This namespace (database.localization) is used to keep strings that might be localized through
+				 a database language (e.g. MCS) -->
+    <Binding namespace="database:localization:TheGroup">
+      <Fields>
+        <Field name="JobCost" valueString="Engagement Cost" />
+        <Field name="ContactManagement" valueString="Contact Management" />
+        <Field name="GeneralLedger" valueString="General Ledger" />
+        <Field name="Subscription" valueString="Subscription" />
+        <Field name="SalesOrders" valueString="Sales Orders" />
+        <Field name="Item" valueString="Item" />
+        <Field name="FixedAssets" valueString="Fixed Assets" />
+        <Field name="Posting" valueString="Posting" />
+        <Field name="StandardDimensions" valueString="Standard Dimensions" />
+        <Field name="PeoplePlanner" valueString="People Planner" />
+      </Fields>
+    </Binding>
+    <Binding namespace="database:localization:DimensionCombUsage">
+      <Fields>
+        <Field name="OffsetAccount" valueString="Offset Account" />
+        <Field name="P_L" valueString="P&amp;L" />
+        <Field name="CostPrice" valueString="Cost Price" />
+        <Field name="OpenCostPrice" valueString="Open Cost Price" />
+        <Field name="BillingPriceTaxable" valueString="Billing Price, Taxable" />
+        <Field name="BillingPriceTaxExempt" valueString="Billing Price, Tax Exempt" />
+        <Field name="BillingPriceExport" valueString="Billing Price, Export" />
+        <Field name="OpenBillingPrice" valueString="Open Billing Price" />
+        <Field name="OpenBillingPriceAdjustment" valueString="Open Billing Price, Adjustment" />
+        <Field name="CostPriceTransferredInternally" valueString="Cost Price Transferred Internally" />
+        <Field name="BillingPriceTransferredInternally" valueString="Billing Price Transferred Internally" />
+        <Field name="StandardBillingPrice" valueString="Standard Billing Price" />
+        <Field name="StandardBillingPriceOffset" valueString="Standard Billing Price, Offset" />
+        <Field name="InvoiceDeviation" valueString="Invoice Deviation" />
+        <Field name="ContractDeviation" valueString="Contract Deviation" />
+        <Field name="ContractDeviationOffset" valueString="Contract Deviation, Offset" />
+        <Field name="P_LIntercompany" valueString="P&amp;L, Intercompany" />
+        <Field name="AccruedP_LIntercompany" valueString="Accrued P&amp;L, Intercompany" />
+        <Field name="CostPriceIntercompany" valueString="Cost Price, Intercompany" />
+        <Field name="AccruedCostPriceIntercompany" valueString="Accrued Cost Price, Intercompany" />
+        <Field name="OpenCostPriceIntercompany" valueString="Open Cost Price, Intercompany" />
+        <Field name="AccruedOpenCostPriceIntercompany" valueString="Accrued Open Cost Price, Intercompany" />
+        <Field name="BillingPriceIntercompany" valueString="Billing Price, Intercompany" />
+        <Field name="AccruedBillingPriceIntercompany" valueString="Accrued Billing Price, Intercompany" />
+        <Field name="JobAccrual" valueString="Engagement Accrual" />
+        <Field name="InvoiceDiscount" valueString="Invoice Discount" />
+        <Field name="InvoicedOnAccount" valueString="Invoiced On Account" />
+      </Fields>
+    </Binding>
+    <Binding namespace="database:localization:BPM">
+      <Fields>
+        <Field name="ARAgingByAccountManager" valueString="AR Aging, by Client Manager" />
+        <Field name="BillToCustomerDistribution" valueString="Bill to Client Distribution" />
+        <Field name="CashReceiptsByAccountManager" valueString="Cash Receipts, by Client Manager" />
+        <Field name="CustomerContactInformation" valueString="Client Contact Information" />
+        <Field name="CustomerInvoices" valueString="Client Invoices" />
+        <Field name="CustomerInvoiceStatus" valueString="Client Invoice Status" />
+        <Field name="CustomerProfitability" valueString="Client Profitability" />
+        <Field name="CustomerProfitabilityByCustomer" valueString="Client Profitability, by Client" />
+        <Field name="CustomerProfitabilityComparisonByCustomer" valueString="Client Profitability Comparison, by Client" />
+        <Field name="CustomerStatement" valueString="Client Statement" />
+        <Field name="InvoicedRegistrations" valueString="Billed WIP" />
+        <Field name="InvoicingWorksheet" valueString="Billing Worksheet" />
+        <Field name="JobBudgetToActualsByTask" valueString="Engagement Budget to Actuals, by Task" />
+        <Field name="JobBudgetToActualsYTD" valueString="Engagement Budget To Actuals YTD" />
+        <Field name="JobBudgetToActualsYTDByAccountManager" valueString="Engagement Budget To Actuals YTD, by Client Manager" />
+        <Field name="JobEmployeeStatus" valueString="Engagement Employee Status" />
+        <Field name="JobEvents" valueString="Engagement Events" />
+        <Field name="JobEventsByCustomer" valueString="Engagement Events, by Client" />
+        <Field name="JobEventsByEmployee" valueString="Engagement Events, by Employee" />
+        <Field name="JobEventsByJob" valueString="Engagement Events, by Engagement" />
+        <Field name="JobList" valueString="Engagement List" />
+        <Field name="JobProfitabilityBudget" valueString="Engagement Profitability Budget" />
+        <Field name="JobProfitabilityBudgetByTask" valueString="Engagement Profitability Budget, by Task" />
+        <Field name="JobProfitabilityComparison" valueString="Engagement Profitability Comparison" />
+        <Field name="JobProfitabilityPeriodic" valueString="Engagement Profitability Periodic" />
+        <Field name="JobProfitabilitySummary" valueString="Engagement Profitability Summary" />
+        <Field name="JobProfitabilitySummaryByJob" valueString="Engagement Profitability Summary, by Engagement" />
+        <Field name="JobProfitabilityTransactions" valueString="Engagement Profitability Transactions" />
+        <Field name="JobStatusByTaskAndEmployee" valueString="Engagement Status, by Task and Employee" />
+        <Field name="JobStatusByTaskAndEmployeeCategory" valueString="Engagement Status, by Task and Employee Category" />
+        <Field name="MainJobSubJobOverview" valueString="Main Engagement, Sub Engagement Overview" />
+        <Field name="RealizationByAccountManager" valueString="Realization, by Client Manager" />
+        <Field name="RevenueAnalysisByCustomer" valueString="Revenue Analysis, by Client" />
+        <Field name="TimeSheetStatusByDay" valueString="Time Sheet Status" />
+        <Field name="WIPAgingByAccountManager" valueString="WIP Aging, by Client Manager" />
+        <Field name="WIPRollforwardByAccountManager" valueString="WIP Rollforward, by Client Manager" />
+      </Fields>
+    </Binding>
+    <Binding entity="InstallationInformation" namespace="system:installation">
+      <Fields>
+        <Field source="s1" />
+        <Field source="InstallationNumber" />
+        <Field source="RegistrationNumber" />
+      </Fields>
+    </Binding>
+    <Binding entity="SystemParameter" namespace="system:parameters:^{envVar('InternalName')}">
+      <Restriction condition="InternalName = 'ApprovalOfAbsence' or               InternalName = 'UseMultipleVATLevels' or               InternalName = 'ShowThreeVATLevels' or        InternalName = 'ShowWithholdingTaxOnPayments' or        InternalName = 'UseVATSubLevels' or        InternalName = 'RecalculationOfVATAtJobReallocation' or               InternalName = 'ReallocateSubModuleDimensions' or               InternalName = 'UseFixedWorkingTimeStampedOnTimeSheets' or               InternalName = 'AllowJobSpecificPaymentAddresses' or               InternalName = 'AllowIncompleteExpenseAndMileageRegistrations' or               InternalName = '@RejectRegOnAmountActivitiesOnTimeSheets' or               InternalName = 'AllowJobSpecificPaymentAttentionPersons' or               InternalName = '@AllowManualPurchaseOrderNumbers' or               InternalName = '@SecretaryCanApproveTimeSheets' or        InternalName = '@UpdateAccountBalance' or               InternalName = 'AllowChangeOfApprover' or               InternalName = 'integrationStatusNoteType' or               InternalName = 'myPlanURL' or        InternalName = 'BPMServerURL' or        InternalName = 'BPMServerRestApiURL' or               InternalName = 'iAccessURL' or        InternalName = 'ShowStandardReports' or        InternalName = 'PreferBPMReports' or        InternalName = 'UseCustomerLevel2' or        InternalName = 'UseCustomerLevel3' or        InternalName = 'UseCustomerLevel4' or        InternalName = 'UseCustomerLevel5' or               InternalName = 'ShowLocation' or               InternalName = 'ShowEntity' or               InternalName = 'ShowProject' or               InternalName = 'ShowPurpose' or               InternalName = 'ShowSpecification1' or               InternalName = 'ShowSpecification2' or               InternalName = 'ShowSpecification3' or               InternalName = 'ShowSpecification4' or               InternalName = 'ShowSpecification5' or               InternalName = 'ShowSpecification6' or               InternalName = 'ShowSpecification7' or               InternalName = 'ShowSpecification8' or               InternalName = 'ShowSpecification9' or               InternalName = 'ShowSpecification10' or               InternalName = 'ShowLocalSpec1' or               InternalName = 'ShowLocalSpec2' or               InternalName = 'ShowLocalSpec3' or               InternalName = 'ShowLocalSpec4' or               InternalName = 'ShowLocalSpec5' or               InternalName = 'ShowLocalSpec6' or               InternalName = 'ShowLocalSpec7' or               InternalName = 'ShowLocalSpec8' or               InternalName = 'ShowLocalSpec9' or               InternalName = 'ShowLocalSpec10' or        InternalName = 'ShowVATCodeSummaryOnInvoiceSelectionLines' or        InternalName = 'EnableKonaIntegration' or        InternalName = 'UseContactCompanyHierarchies' or        InternalName = 'MailPortAndServer' or        InternalName = 'AutomaticallyCreateTimeSheetLinesFromApprovedAbsence' or         InternalName = 'AllowEditingOfAbsenceTimeSheetLines' or         InternalName = 'EnableStandardExtensions' or         InternalName = 'EnableLongTextEmulationInWorkspaces' or         InternalName = 'EnableEmployeeVendorLinking' or        InternalName = 'webServiceAPINamespace' or        InternalName = 'webServiceAPIPassword' or        InternalName = 'webServiceAPISOAPAddress' or               InternalName = 'EnableDeltekTalentManagementIntegration' or               InternalName = 'PlanningAssistantURL' or               InternalName = 'PeoplePlannerEnableSilentSignIn' or        InternalName = 'webServiceAPIUser' or        InternalName = '@UpdateRightsFromGroups' or        InternalName = 'ShowJobPreInvoiceReconciliationInWorkspaces' or        Internalname = 'AutomaticUpdateOfReportingStructureTable' or        InternalName = '@CreateVendorsCentrallyOnly' or                InternalName = '@CreateCustomersCentrallyOnly'" />
+      <Fields>
+        <Fields ref="CommonSystemParameters" />
+        <Field source="TheGroup" />
+        <Field source="Description" />
+        <Field source="Format" />
+        <Field source="AllowCompanyParameter" />
+      </Fields>
+    </Binding>
+    <Binding entity="SystemParameterLine" namespace="system:parameters:^{envVar('InternalName')}:^{envVar('CompanyNumber')}">
+      <Restriction condition="InternalName = 'ApprovalOfAbsence' or               InternalName = 'UseMultipleVATLevels' or               InternalName = 'ShowThreeVATLevels' or        InternalName = 'ShowWithholdingTaxOnPayments' or         InternalName = 'RecalculationOfVATAtJobReallocation' or               InternalName = 'ReallocateSubModuleDimensions' or               InternalName = 'UseFixedWorkingTimeStampedOnTimeSheets' or               InternalName = 'AllowJobSpecificPaymentAddresses' or               InternalName = 'AllowIncompleteExpenseAndMileageRegistrations' or               InternalName = '@RejectRegOnAmountActivitiesOnTimeSheets' or               InternalName = 'AllowJobSpecificPaymentAttentionPersons' or               InternalName = '@AllowManualPurchaseOrderNumbers' or               InternalName = '@UpdateAccountBalance' or        InternalName = 'UseCustomerLevel2' or        InternalName = 'UseCustomerLevel3' or        InternalName = 'UseCustomerLevel4' or        InternalName = 'UseCustomerLevel5' or        InternalName = 'EnableKonaIntegration' or        InternalName = 'MailPortAndServer' or        InternalName = 'AutomaticallyCreateTimeSheetLinesFromApprovedAbsence' or        InternalName = 'AllowEditingOfAbsenceTimeSheetLines' or         InternalName = 'EnableStandardExtensions' or         InternalName = 'EnableLongTextEmulationInWorkspaces' or         InternalName = 'EnableDeltekTalentManagementIntegration' or         InternalName = 'ShowJobPreInvoiceReconciliationInWorkspaces'" />
+      <Fields>
+        <Fields ref="CommonSystemParameters" />
+        <Field source="CompanyNumber" />
+        <Field source="Currency" />
+      </Fields>
+    </Binding>
+  </Environment>
+  <Configuration>
+    <Dictionaries>
+      <Dictionary source="en_US_CPA"/> 
+    </Dictionaries>    
+    <Popups restrain="startsWith(popup.literal,'Delete')" order="inherent" />
+  </Configuration>
+</MCSL>
