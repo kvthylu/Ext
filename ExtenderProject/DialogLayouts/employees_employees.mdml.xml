@@ -103,7 +103,7 @@
               <Field source="Position" open="not isEmployeeLinkedWithDeltekTalentManagement()" />
               <Field source="EmployeePopup1" title="Employee Status" />
               <Field source="PrimaryEmployeeCategoryNumber" title="Primary Category" size="large" />
-              <Field source="JobPriceGroupNumber" />
+              <Field source="JobPriceGroupNumber" size="large" />
               <If condition="isSolutionPropertyEnabled('IsCPASolution')">
                 <Field source="EmployeeType" title="Approver Group" />
               </If>
@@ -159,6 +159,7 @@
               <Reference foreignKey="Specification3Name_Specification3" keySource="Specification3Name" />
               <Reference foreignKey="EntityName_Entity" keySource="EntityName" />
               <Reference foreignKey="PurposeName_Purpose" keySource="PurposeName" />
+              <Reference foreignKey="Specification5Name_Specification5" keySource="Specification5Name" />
               <Field source="LocalSpec2Name" />
             </Group>
             <Group title="Related Employees">
