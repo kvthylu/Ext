@@ -1,0 +1,710 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MDML xmlns="http://www.deltek.com/ns/mdml" version="0.97">
+  <Layout source="VendorCard">
+    <FilterPane>
+      <Define>
+        <Function name="isRequested" parameters="FieldPar" value="FieldPar=AllowedType'Requested" />
+      </Define>
+      <Filter name="Standard">
+        <Actions>
+          <If condition="hasWorkspace('BankruptcyManagement')">
+            <Action source="mount-&gt;ImportVendors.Import" wizard="ImportWizard" disabled="false" />
+          </If>
+        </Actions>
+        <Compact>
+          <Description template="^1 (^2)" arguments="Name1;VendorNumber" />
+        </Compact>
+        <Columns>
+          <Field source="VendorNumber" />
+          <Field source="Name1" />
+          <Field source="Name2" />
+          <Field source="Name3" />
+          <Field source="ZipCode" />
+          <Field source="PostalDistrict" />
+          <Field source="Name4" />
+          <Field source="Name5" />
+          <Field source="Attention" />
+          <Field source="YourReference" />
+        </Columns>
+      </Filter>
+      <Filter name="VendorHome">
+        <Actions>
+          <Action source="with-&gt;VendorCard.Create" wizard="CreateVendorWizard" />
+          <Action source="mount-&gt;ImportVendors.Import" wizard="ImportWizard" disabled="false" />
+        </Actions>
+        <ControlBar>
+          <Selection default="MyVendors">
+            <Option name="MyVendors" title="My Vendors" restriction="ActiveStatus = ActiveType'Active                        and (Responsible = maconomy:userEmployeeNumber()                           or OurReference = maconomy:userEmployeeNumber()                           or OurReference = maconomy:username())" />
+            <Option name="DepartmentVendors" title="Department Vendors" restriction="ActiveStatus = ActiveType'Active                        and LocationName = stringEnvVar('user.employeeinfo.EntityName')" />
+            <Option name="AllVendors" title="Active Vendors" restriction="ActiveStatus = ActiveType'Active" />
+            <Option name="VendorWithPendingRequests" title="Pending Requests" restriction="ActiveStatus = ActiveType'Active                      and (AllowForUseAsSubcontractor = AllowedType'Requested                          or AllowForUseAsOutlayVendor = AllowedType'Requested                          or AllowForUseAsInterCompanyVendor = AllowedType'Requested                          or AllowForUseAsItemSupplier = AllowedType'Requested                          or AllowCompanyVendorCreation = AllowedType'Requested                          or AllowBudgets = AllowedType'Requested                          or AllowRegistrations = AllowedType'Requested                          or AllowRequisitionsAndRFQ = AllowedType'Requested                          or AllowPurchaseOrders = AllowedType'Requested                          or AllowVendorInvoices = AllowedType'Requested                          or AllowPayments = AllowedType'Requested                          or AllowReporting = AllowedType'Requested                          or AllowForUseAsTemplateParentVendor = AllowedType'Requested)" />
+            <Option name="InactiveVendors" title="Inactive Vendors" restriction="ActiveStatus = ActiveType'Inactive" />
+          </Selection>
+        </ControlBar>
+        <Compact>
+          <Description template="^1(^2)" arguments="Name1;VendorNumber" />
+        </Compact>
+        <Columns>
+          <Field source="VendorNumber" />
+          <Field source="Name1" title="Vendor Name" />
+          <Field source="Name3" title="Address" />
+          <Field source="Country" />
+          <Field source="Attention" />
+          <Field source="Telephone" />
+          <Link template="^1" arguments="ElectronicMailAddress" tooltip="Send email to vendor" url="'mailto:'+urlEncode(ElectronicMailAddress)" icon="Mail" title="Email">
+            <Override condition="ElectronicMailAddress = ''">
+              <Link template="-" icon="" disabled="true" style="justifyCenter" />
+            </Override>
+          </Link>
+          <If condition="maconomy:isSelectedOption('AllVendors')">
+            <Field source="PaymentVendor" />
+            <Field source="ParentVendor" />
+            <Field source="Language" />
+            <Field source="Currency" />
+            <Field source="PaymentTerms" />
+            <Field source="VendorGroup" />
+          </If>
+          <If condition="maconomy:isSelectedOption('VendorWithPendingRequests')">
+            <Field source="AllowForUseAsSubcontractor">
+              <Style ref="highlightRow" condition="isRequested(AllowForUseAsSubcontractor)" />
+            </Field>
+            <Field source="AllowForUseAsOutlayVendor">
+              <Style ref="highlightRow" condition="isRequested(AllowForUseAsOutlayVendor)" />
+            </Field>
+            <Field source="AllowForUseAsInterCompanyVendor">
+              <Style ref="highlightRow" condition="isRequested(AllowForUseAsInterCompanyVendor)" />
+            </Field>
+            <Field source="AllowForUseAsItemSupplier">
+              <Style ref="highlightRow" condition="isRequested(AllowForUseAsItemSupplier)" />
+            </Field>
+            <Field source="AllowCompanyVendorCreation">
+              <Style ref="highlightRow" condition="isRequested(AllowCompanyVendorCreation)" />
+            </Field>
+            <Field source="AllowBudgets">
+              <Style ref="highlightRow" condition="isRequested(AllowBudgets)" />
+            </Field>
+            <Field source="AllowRegistrations">
+              <Style ref="highlightRow" condition="isRequested(AllowRegistrations)" />
+            </Field>
+            <Field source="AllowRequisitionsAndRFQ">
+              <Style ref="highlightRow" condition="isRequested(AllowRequisitionsAndRFQ)" />
+            </Field>
+            <Field source="AllowPurchaseOrders">
+              <Style ref="highlightRow" condition="isRequested(AllowPurchaseOrders)" />
+            </Field>
+            <Field source="AllowVendorInvoices">
+              <Style ref="highlightRow" condition="isRequested(AllowVendorInvoices)" />
+            </Field>
+            <Field source="AllowPayments">
+              <Style ref="highlightRow" condition="isRequested(AllowPayments)" />
+            </Field>
+            <Field source="AllowReporting">
+              <Style ref="highlightRow" condition="isRequested(AllowReporting)" />
+            </Field>
+            <Field source="AllowForUseAsTemplateParentVendor">
+              <Style ref="highlightRow" condition="isRequested(AllowForUseAsTemplateParentVendor)" />
+            </Field>
+          </If>
+        </Columns>
+      </Filter>
+    </FilterPane>
+    <UpperPane>
+      <Define>
+        <Include fragment="GD_Dimensions" />
+        <Include fragment="GD_Approvals" />
+        <Trigger name="refresh">
+          <Refresh type="workspace" />
+        </Trigger>
+        <Trigger name="CreateEmployeeVendorPre">
+          <Assign source="EmployeeNumber" value="parent.EmployeeNumber" />
+          <Assign source="EmployeeNameVar" value="parent.Name1" />
+          <Assign source="TimeRegistrationUnit" value="parent.TimeRegistrationUnit" />
+        </Trigger>
+        <Trigger name="CPACreateEmployeeVendorPre">
+          <Assign source="EmployeeNumber" value="parent.EmployeeNumber" />
+          <Assign source="VendorNumber" value="'E-' + parent.EmployeeNumber" />
+          <Assign source="ParentVendor" value="'TemplateEmployeeVendor'" />
+        </Trigger>
+      </Define>
+      <Wizard name="CreateVendorWizard" title="Create Vendor">
+        <Page form="CreateVendorWizardPage1" title="Basic Information" description="Please enter the vendor name" />
+        <If condition="ParentVendor=''">
+          <Page form="CreateVendorWizardPage2" title="Detailed Information" description="Please enter the following information" />
+        </If>
+      </Wizard>
+      <Wizard name="CreateEmployeeVendorWizard" title="Create Employee Vendor" postTrigger="refresh">
+        <Page form="CreateEmployeeVendorWizardPage1" title="Basic Information" description="Please enter the vendor name" preTrigger="CreateEmployeeVendorPre" />
+        <If condition="ParentVendor=''">
+          <Page form="CreateVendorWizardPage2" title="Detailed Information" description="Please enter the following mandatory information" />
+        </If>
+      </Wizard>
+      <Wizard name="CPACreateEmployeeVendorWizard" title="Create Employee Vendor" postTrigger="refresh">
+        <Page form="CreateEmployeeVendorWizardPage1" title="Basic Information" description="Please enter the vendor name" preTrigger="CPACreateEmployeeVendorPre" />
+        <If condition="ParentVendor=''">
+          <Page form="CreateVendorWizardPage2" title="Detailed Information" description="Please enter the following mandatory information" />
+        </If>
+      </Wizard>
+      <Form name="Full">
+        <Actions all="true" />
+        <Row>
+          <Column>
+            <Group title="Vendor{Creditor}">
+              <Reference foreignKey="VendorNumber_Vendor" />
+              <Field source="Name2" appearance="maximized" />
+              <Field source="Name3" appearance="maximized" />
+              <ZipCity citySource="PostalDistrict" zipSource="ZipCode" appearance="maximized" />
+              <Field source="Name4" appearance="maximized" />
+              <Field source="Name5" appearance="maximized" />
+              <Field source="Attention" />
+              <Field source="Country" />
+              <Field source="Telephone" />
+              <Field source="Telefax" />
+              <Field source="Telex" />
+              <Field source="Giro" />
+              <Field source="ElectronicMailAddress" />
+            </Group>
+            <Group title="Settling Company">
+              <Reference foreignKey="SettlingCompany_CompanyInformation" />
+            </Group>
+            <Group title="General Information">
+              <Field source="DepartmentNumber" />
+              <Field source="Language" />
+              <Field source="Currency" />
+              <Field source="VendorGroup" />
+              <Field source="Enterprise" />
+              <Field source="Segment" />
+              <Field source="Area" />
+              <Field source="CompanyRegistrationNumber" />
+              <Field source="CNRNumber" />
+              <Boolean source="Disclosable" />
+              <Field source="ActiveStatus" />
+              <If condition="ActiveStatus = ActiveType'Active">
+                <Field source="FirstActivationDate" />
+              </If>
+              <ElseIf condition="FirstActivationDate != NullDate">
+                <Interval firstSource="FirstActivationDate" lastSource="LastInactivationDate" title="Active Period" />
+              </ElseIf>
+              <Field source="AllocationCodeName" />
+              <Field source="WeekCalendarNumber" />
+              <Field source="HolidayCalendarName" />
+            </Group>
+            <Group title="Document Archive">
+              <Reference foreignKey="DocumentArchiveNumber_DocumentArchiveHeader" />
+            </Group>
+            <Group title="Purchase Orders">
+              <Boolean source="SelfInvoiceAgreement" title="Default to Self Invoices" />
+              <BooleanGroup title="Reference Mandatory on">
+                <Boolean source="PurchaseOrderLineMandatoryTime" title="Time Sheet Lines" />
+                <Boolean source="PurchaseOrderLineMandatoryExpense" title="Expense Sheet Lines" />
+              </BooleanGroup>
+            </Group>
+            <Group title="Allowed Use">
+              <Field source="AllowForUseAsSubcontractor" />
+              <Field source="AllowForUseAsOutlayVendor" />
+              <Field source="AllowForUseAsInterCompanyVendor" />
+              <Field source="AllowForUseAsItemSupplier" />
+              <Field source="AllowCompanyVendorCreation" />
+              <Field source="AllowBudgets" />
+              <Field source="AllowRegistrations" />
+              <Field source="AllowRequisitionsAndRFQ" />
+              <Field source="AllowPurchaseOrders" />
+              <Field source="AllowVendorInvoices" />
+              <Field source="AllowPayments" />
+              <Field source="AllowReporting" />
+              <Field source="AllowForUseAsTemplateParentVendor" />
+            </Group>
+          </Column>
+          <Column>
+            <Group title="Pay to Vendor">
+              <Reference foreignKey="PaymentVendor_Vendor" />
+              <Field source="Name2Var" appearance="maximized" />
+              <Field source="Name3Var" appearance="maximized" />
+              <ZipCity citySource="PostalDistrictVar" zipSource="ZipCodeVar" appearance="maximized" />
+              <Field source="Name4Var" appearance="maximized" />
+              <Field source="Name5Var" appearance="maximized" />
+              <Field source="AttentionVar" title="Attn." />
+              <Field source="CountryVar" title="Country" />
+              <Field source="TelephoneVar" title="Phone" />
+              <Field source="ElectronicMailAddressVar" title="E-mail{native}" />
+            </Group>
+            <Group title="Linking">
+              <Field source="VendorVendorLinking" />
+              <Reference foreignKey="ParentVendor_Vendor" descriptionSearchView="AllowForUseAsTemplateParentVendor" descriptionSearchOption="Allowed" keySearchView="AllowForUseAsTemplateParentVendor" keySearchOption="Allowed" />
+              <If condition="maconomy:booleanSysPar('EnableEmployeeVendorLinking')">
+                <Reference foreignKey="EmployeeNumber_Employee" />
+              </If>
+            </Group>
+            <Group title="Purchase Information">
+              <Field source="OurCustomerNumber" />
+              <Field source="Purchaser" />
+              <Field source="PriceListNumber" />
+              <Boolean source="MaintainPrice" />
+              <Field source="CostPercentage" />
+              <Field source="InvoiceDiscountPercentage" />
+              <Field source="YourReference" />
+              <Field source="OurReference" />
+              <Field source="TimeRegistrationUnit" />
+            </Group>
+            <Group title="Payment Information">
+              <Field source="PaymentMode" />
+              <Field source="ControlAccountCode" />
+              <Field source="PaymentTerms" />
+            </Group>
+            <Group title="Warehouse Information{1}">
+              <Field source="InventoryNumber" />
+              <Field source="DeliveryTerms" title="Delivery Terms{abbr}" />
+              <Field source="DeliveryMode" />
+            </Group>
+            <Group title="Access Level">
+              <Field source="AccessLevelName" title="Name" />
+            </Group>
+            <Group title="Extra Fields">
+              <Field source="Vendorpopup1" />
+              <Field source="Vendorpopup2" />
+              <Field source="Vendorpopup3" />
+              <Field source="Vendorpopup4" />
+              <Field source="Vendorpopup5" />
+            </Group>
+            <Group ref="UserUpdateGroup" />
+          </Column>
+        </Row>
+        <Row>
+          <Group title="Dimension Combination">
+            <Grid>
+              <Header cells="|Value|;|Description|" title="" style="label" />
+              <Row cells="DimensionCombNumber;DimensionCombDescriptionVar" title="Dim. Comb." />
+            </Grid>
+          </Group>
+        </Row>
+        <Row>
+          <Group ref="DerivedCompanyGroup" />
+        </Row>
+        <Row>
+          <Group ref="DerivedDimensionGroup" />
+        </Row>
+        <Row>
+          <Group title="Print Control">
+            <Pair firstSource="Statistic1" secondSource="Statistic1List" firstShadowTitle="Value" secondShadowTitle="List" title="Statistics 1" />
+            <Pair firstSource="Statistic2" secondSource="Statistic2List" firstShadowTitle="Value" secondShadowTitle="List" title="Statistics 2" />
+            <Pair firstSource="Statistic3" secondSource="Statistic3List" firstShadowTitle="Value" secondShadowTitle="List" title="Statistics 3" />
+            <Pair firstSource="Statistic4" secondSource="Statistic4List" firstShadowTitle="Value" secondShadowTitle="List" title="Statistics 4" />
+          </Group>
+        </Row>
+        <Row>
+          <Group title="Remarks{pl}">
+            <Field source="RemarkText1" appearance="maximized" />
+            <Field source="RemarkText2" appearance="maximized" />
+            <Field source="RemarkText3" appearance="maximized" />
+            <Field source="RemarkText4" appearance="maximized" />
+            <Field source="RemarkText5" appearance="maximized" />
+            <Field source="RemarkText6" appearance="maximized" />
+            <Field source="RemarkText7" appearance="maximized" />
+            <Field source="RemarkText8" appearance="maximized" />
+            <Field source="RemarkText9" appearance="maximized" />
+            <Field source="RemarkText10" appearance="maximized" />
+          </Group>
+        </Row>
+      </Form>
+      <Form name="Standard" style="fullWidth">
+        <Actions>
+          <If condition="not hasWorkspace('Approvals')">
+            <Update />
+            <Delete />
+            <Print />
+          </If>
+          <PrintThis />
+          <If condition="(hasWorkspace('Approvals') or hasWorkspace('Vendors'))">
+            <If condition="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.CanUseApprovalHierarchiesVar">
+              <Action source="Submit" />
+            </If>
+            <If condition="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.UseApprovalHierarchiesVar">
+              <Action source="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.ApproveAll" title="Approve" icon="Approve" disabled="not isActionEnabled('Approve')" />
+              <Action source="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.RejectAll" title="Reject" wizard="RejectAllWizard" icon="Reject" disabled="not Submitted" />
+              <Action source="ApprovalGroupInstanceKey_ApprovalGroup-&gt;ApprovalGroups.ResetAll" title="Undo Approval/Reject" icon="Remove" disabled="not Submitted" />
+            </If>
+          </If>
+        </Actions>
+        <Column>
+          <If condition="hasWorkspace('Approvals') or hasWorkspace('Vendors')">
+            <Group ref="ApprovalStatusFromApprovalGroup" />
+          </If>
+          <Group title="Vendor{Creditor}">
+            <Reference foreignKey="VendorNumber_Vendor" keyShadowTitle="Number" descriptionShadowTitle="Name" />
+            <Field source="Name2" appearance="maximized" shadowTitle="Address 1" />
+            <Field source="Name3" appearance="maximized" shadowTitle="Address 2" />
+            <ZipCity citySource="PostalDistrict" zipSource="ZipCode" appearance="maximized" cityShadowTitle="City" zipShadowTitle="Postal Code" />
+            <Field source="Name4" appearance="maximized" shadowTitle="Address 3" />
+            <Field source="Name5" appearance="maximized" shadowTitle="Address 4" />
+            <Field source="Attention" />
+            <Field source="Country" />
+            <Field source="Telephone" />
+            <Field source="Telefax" />
+            <Field source="Telex" />
+            <Field source="Giro" />
+            <Field source="ElectronicMailAddress" />
+          </Group>
+          <Group title="Settling Company">
+            <Reference foreignKey="SettlingCompany_CompanyInformation" />
+          </Group>
+          <Group title="General Information">
+            <Field source="DepartmentNumber" />
+            <Field source="Language" />
+            <Field source="Currency" />
+            <Field source="VendorGroup" />
+            <Field source="Enterprise" />
+            <Field source="Segment" />
+            <Field source="Area" />
+            <Field source="CompanyRegistrationNumber" />
+            <Field source="CNRNumber" />
+            <Field source="AllocationCodeName" />
+            <Field source="WeekCalendarNumber" />
+            <Field source="HolidayCalendarName" />
+            <Boolean source="Disclosable" />
+            <Field source="ActiveStatus" />
+            <If condition="ActiveStatus = ActiveType'Active">
+              <Field source="FirstActivationDate" />
+            </If>
+            <ElseIf condition="FirstActivationDate != NullDate">
+              <Interval firstSource="FirstActivationDate" lastSource="LastInactivationDate" title="Active Period" />
+            </ElseIf>
+          </Group>
+          <Group title="Document Archive">
+            <Reference foreignKey="DocumentArchiveNumber_DocumentArchiveHeader" />
+          </Group>
+          <Group title="Print Control">
+            <Pair firstSource="Statistic1" secondSource="Statistic1List" firstShadowTitle="Value" secondShadowTitle="List" title="Statistics 1" />
+            <Pair firstSource="Statistic2" secondSource="Statistic2List" firstShadowTitle="Value" secondShadowTitle="List" title="Statistics 2" />
+            <Pair firstSource="Statistic3" secondSource="Statistic3List" firstShadowTitle="Value" secondShadowTitle="List" title="Statistics 3" />
+            <Pair firstSource="Statistic4" secondSource="Statistic4List" firstShadowTitle="Value" secondShadowTitle="List" title="Statistics 4" />
+          </Group>
+        </Column>
+        <Column>
+          <Group title="Pay to Vendor">
+            <Reference foreignKey="PaymentVendor_Vendor" />
+            <Field source="Name2Var" appearance="maximized" />
+            <Field source="Name3Var" appearance="maximized" />
+            <ZipCity citySource="PostalDistrictVar" zipSource="ZipCodeVar" appearance="maximized" />
+            <Field source="Name4Var" appearance="maximized" />
+            <Field source="Name5Var" appearance="maximized" />
+            <Field source="AttentionVar" title="Attn." />
+            <Field source="CountryVar" title="Country" />
+            <Field source="TelephoneVar" title="Phone" />
+            <Field source="ElectronicMailAddressVar" title="E-mail{native}" />
+          </Group>
+          <Group title="Linking">
+            <Field source="VendorVendorLinking" />
+            <Reference foreignKey="ParentVendor_Vendor" descriptionSearchView="AllowForUseAsTemplateParentVendor" descriptionSearchOption="Allowed" keySearchView="AllowForUseAsTemplateParentVendor" keySearchOption="Allowed" />
+            <If condition="maconomy:booleanSysPar('EnableEmployeeVendorLinking')">
+              <Reference foreignKey="EmployeeNumber_Employee" />
+            </If>
+          </Group>
+          <Group title="Purchase Information">
+            <Field source="OurCustomerNumber" />
+            <Field source="Purchaser" />
+            <Field source="PriceListNumber" />
+            <Boolean source="MaintainPrice" />
+            <Field source="CostPercentage" />
+            <Field source="InvoiceDiscountPercentage" />
+            <Field source="YourReference" />
+            <Field source="OurReference" />
+            <Field source="TimeRegistrationUnit" />
+          </Group>
+          <Group title="Warehouse Information{1}">
+            <Field source="InventoryNumber" />
+            <Field source="DeliveryTerms" title="Delivery Terms{abbr}" />
+            <Field source="DeliveryMode" />
+          </Group>
+          <Group title="Access Level">
+            <Field source="AccessLevelName" title="Name" />
+          </Group>
+          <Group ref="UserUpdateGroup" />
+        </Column>
+      </Form>
+      <Form name="Dimensions">
+        <Actions>
+          <Update />
+        </Actions>
+        <Column style="fullWidth">
+          <Group title="Dimension Combination">
+            <Grid>
+              <Header cells="|Value|;|Description|" title="" style="label" />
+              <Row cells="DimensionCombNumber;DimensionCombDescriptionVar" title="Dim. Comb." />
+            </Grid>
+          </Group>
+          <Group title="Derived Company">
+            <Grid>
+              <Header cells="|Value|;|Description|;|Overwrite|" title="" style="label" />
+              <Row cells="CompanyNumber;CompanyNameVar;OverwriteCompany#" title="Company     " />
+              <!-- the space was necessary for alignment -->
+            </Grid>
+          </Group>
+          <Group ref="DerivedDimensionGroup" />
+        </Column>
+      </Form>
+      <Form name="ExtraInformation">
+        <Actions>
+          <Update />
+        </Actions>
+        <Row>
+          <Group title="Extra Fields">
+            <Field source="Vendorpopup1" />
+            <Field source="Vendorpopup2" />
+            <Field source="Vendorpopup3" />
+            <Field source="Vendorpopup4" />
+            <Field source="Vendorpopup5" />
+          </Group>
+        </Row>
+        <Row>
+          <Group title="Remarks{pl}">
+            <Field source="RemarkText1" appearance="maximized" />
+            <Field source="RemarkText2" appearance="maximized" />
+            <Field source="RemarkText3" appearance="maximized" />
+            <Field source="RemarkText4" appearance="maximized" />
+            <Field source="RemarkText5" appearance="maximized" />
+            <Field source="RemarkText6" appearance="maximized" />
+            <Field source="RemarkText7" appearance="maximized" />
+            <Field source="RemarkText8" appearance="maximized" />
+            <Field source="RemarkText9" appearance="maximized" />
+            <Field source="RemarkText10" appearance="maximized" />
+          </Group>
+        </Row>
+      </Form>
+      <Form name="AllowedActions">
+        <Actions>
+          <Update />
+        </Actions>
+        <Row>
+          <Group title="Allowed Use">
+            <Field source="AllowForUseAsSubcontractor" />
+            <Field source="AllowForUseAsOutlayVendor" />
+            <Field source="AllowForUseAsInterCompanyVendor" />
+            <Field source="AllowForUseAsItemSupplier" />
+            <Field source="AllowCompanyVendorCreation" />
+            <Field source="AllowBudgets" />
+            <Field source="AllowRegistrations" />
+            <Field source="AllowRequisitionsAndRFQ" />
+            <Field source="AllowPurchaseOrders" />
+            <Field source="AllowVendorInvoices" />
+            <Field source="AllowPayments" />
+            <Field source="AllowReporting" />
+            <Field source="AllowForUseAsTemplateParentVendor" />
+          </Group>
+        </Row>
+        <Row>
+          <Group title="Purchase Orders">
+            <Boolean source="SelfInvoiceAgreement" title="Default to Self Invoices" />
+            <BooleanGroup title="Reference Mandatory on">
+              <Boolean source="PurchaseOrderLineMandatoryTime" title="Time Sheet Lines" />
+              <Boolean source="PurchaseOrderLineMandatoryExpense" title="Expense Sheet Lines" />
+            </BooleanGroup>
+          </Group>
+        </Row>
+      </Form>
+      <Form name="Overview">
+        <Row>
+          <Group title="Vendor{Creditor}">
+            <Reference foreignKey="VendorNumber_Vendor" />
+            <If condition="Name2 != ''">
+              <Field source="Name2" appearance="maximized" />
+            </If>
+            <Field source="Country" appearance="maximized" />
+            <EmptyLabel />
+            <Field source="Attention" />
+            <Field source="Telephone" />
+            <Field source="ActiveStatus" />
+            <If condition="ActiveStatus = ActiveType'Active">
+              <Field source="FirstActivationDate" />
+            </If>
+            <ElseIf condition="FirstActivationDate != NullDate">
+              <Interval firstSource="FirstActivationDate" lastSource="LastInactivationDate" title="Active Period" />
+            </ElseIf>
+          </Group>
+          <Group title="Pay to Vendor{Creditor}">
+            <Reference foreignKey="PaymentVendor_Vendor" />
+            <If condition="Name2Var != ''">
+              <Field source="Name2Var" appearance="maximized" />
+            </If>
+            <Field source="CountryVar" appearance="maximized" />
+            <EmptyLabel />
+            <Field source="AttentionVar" title="Attn." />
+            <Field source="TelephoneVar" title="Phone" />
+          </Group>
+        </Row>
+        <Row>
+          <Group title="Settling Company">
+            <Reference foreignKey="SettlingCompany_CompanyInformation" />
+          </Group>
+          <Group title="Linking">
+            <Field source="VendorVendorLinking" />
+            <Reference foreignKey="ParentVendor_Vendor" descriptionSearchView="AllowForUseAsTemplateParentVendor" descriptionSearchOption="Allowed" keySearchView="AllowForUseAsTemplateParentVendor" keySearchOption="Allowed" />
+            <If condition="maconomy:booleanSysPar('EnableEmployeeVendorLinking')">
+              <Reference foreignKey="EmployeeNumber_Employee" />
+            </If>
+          </Group>
+        </Row>
+        <If condition="not hasWorkspace('VendorHome')">
+          <Row>
+            <Group>
+              <Link workspace="Vendors" template="More details..." title=" " appearance="maximized" icon="WorkspaceLink">
+                <Target pane="VendorCard_Filter">
+                  <Restriction template="Selected Vendor" expression="VendorNumber=target.VendorNumber" />
+                  <Focus>
+                    <Match field="VendorNumber" value="VendorNumber" />
+                  </Focus>
+                </Target>
+              </Link>
+            </Group>
+          </Row>
+        </If>
+      </Form>
+      <Form name="IntercompanyVendor">
+        <Column style="fullWidth">
+          <Group title="Vendor{Creditor}">
+            <Reference foreignKey="VendorNumber_CompanyVendor" descriptionSource="Name1" title="Vendor" />
+            <Field source="Name2" appearance="maximized" />
+            <Field source="Name3" appearance="maximized" />
+            <ZipCity citySource="PostalDistrict" zipSource="ZipCode" appearance="maximized" />
+            <Field source="Attention" />
+            <Field source="Telephone" />
+            <Field source="Country" />
+          </Group>
+          <Group title="Pay to Vendor">
+            <Reference foreignKey="PaymentVendor_Vendor" title="Vendor" />
+            <Field source="Name2Var" appearance="maximized" />
+            <Field source="Name3Var" appearance="maximized" />
+            <ZipCity citySource="PostalDistrictVar" zipSource="ZipCodeVar" appearance="maximized" />
+            <Field source="AttentionVar" title="Attn." />
+            <Field source="TelephoneVar" title="Phone" />
+            <Field source="CountryVar" title="Country" />
+          </Group>
+          <Group title="Linking">
+            <Field source="VendorVendorLinking" />
+            <Reference foreignKey="ParentVendor_Vendor" title="Vendor" descriptionSearchView="AllowForUseAsTemplateParentVendor" descriptionSearchOption="Allowed" keySearchView="AllowForUseAsTemplateParentVendor" keySearchOption="Allowed" />
+            <If condition="maconomy:booleanSysPar('EnableEmployeeVendorLinking')">
+              <Reference foreignKey="EmployeeNumber_Employee" />
+            </If>
+          </Group>
+          <Group title="Settling Company">
+            <Reference foreignKey="SettlingCompany_CompanyInformation" descriptionSource="SettlingCompanyNameVar" title="Company" />
+          </Group>
+        </Column>
+      </Form>
+      <Form name="CreateVendorWizardPage1">
+        <Actions all="true" />
+        <Column style="fullWidth">
+          <Group title="Vendor{Creditor}">
+            <Reference foreignKey="VendorNumber_Vendor" appearance="maximized" descriptionMandatory="true" keySuggestions="none" keyShadowTitle="Number (blank for default)" />
+            <Field source="Name2" appearance="maximized" shadowTitle="Address 1" />
+            <Field source="Name3" appearance="maximized" shadowTitle="Address 2" />
+            <ZipCity citySource="PostalDistrict" zipSource="ZipCode" appearance="maximized" cityShadowTitle="City" zipShadowTitle="Postal Code" />
+            <Field source="Attention" />
+            <Field source="Country" mandatory="ParentVendor=''" />
+            <Field source="Telephone" />
+            <Field source="ElectronicMailAddress" />
+          </Group>
+          <Group title="Linking">
+            <Field source="VendorVendorLinking" />
+            <Reference foreignKey="ParentVendor_Vendor" title="Vendor{Creditor}" descriptionSearchView="AllowForUseAsTemplateParentVendor" descriptionSearchOption="Allowed" keySearchView="AllowForUseAsTemplateParentVendor" keySearchOption="Allowed" />
+            <If condition="maconomy:booleanSysPar('EnableEmployeeVendorLinking')">
+              <Reference foreignKey="EmployeeNumber_Employee" />
+            </If>
+          </Group>
+          <Group title="Pay to Vendor{Creditor}">
+            <Reference foreignKey="PaymentVendor_Vendor" title="Vendor" />
+          </Group>
+          <Group title="Contact Persons">
+            <Reference foreignKey="Responsible_Employee" title="Responsible" />
+            <Field source="OurReference" />
+          </Group>
+        </Column>
+      </Form>
+      <Form name="CreateEmployeeVendorWizardPage1">
+        <Actions all="true" />
+        <Column style="fullWidth">
+          <Group title="Vendor{Creditor}">
+            <Reference foreignKey="VendorNumber_Vendor" appearance="maximized" descriptionMandatory="false" keySuggestions="none" keyShadowTitle="Number (blank for default)" />
+          </Group>
+          <Group title="Linking">
+            <Field source="VendorVendorLinking" shadowTitle="(blank for default)" />
+            <Reference foreignKey="ParentVendor_Vendor" title="Parent Vendor{Creditor}" descriptionSearchView="AllowForUseAsTemplateParentVendor" descriptionSearchOption="Allowed" keySearchView="AllowForUseAsTemplateParentVendor" keySearchOption="Allowed" />
+            <Reference foreignKey="EmployeeNumber_Employee" open="false" />
+          </Group>
+          <Group title="Pay to Vendor{Creditor}">
+            <Reference foreignKey="PaymentVendor_Vendor" title="Vendor" />
+          </Group>
+          <Group title="Contact Persons">
+            <Reference foreignKey="Responsible_Employee" title="Responsible" />
+            <Field source="OurReference" />
+          </Group>
+        </Column>
+      </Form>
+      <Form name="CreateVendorWizardPage2">
+        <Actions all="true" />
+        <Column>
+          <Group title="General Information">
+            <Field source="Language" mandatory="true" />
+            <Field source="DepartmentNumber" mandatory="true" />
+            <Field source="VendorGroup" mandatory="true" />
+            <Field source="Currency" mandatory="true" />
+            <Field source="TimeRegistrationUnit" mandatory="true" />
+          </Group>
+          <Group title="Payment Information">
+            <Field source="PaymentMode" mandatory="true" suggestions="onDemand" />
+            <Field source="ControlAccountCode" />
+            <Field source="PaymentTerms" />
+          </Group>
+          <Group title="Warehouse Information{1}">
+            <Field source="InventoryNumber" mandatory="true" />
+            <Field source="DeliveryTerms" title="Delivery Terms{abbr}" mandatory="true" />
+            <Field source="DeliveryMode" mandatory="true" />
+          </Group>
+        </Column>
+      </Form>
+      <Form name="Overview_Vertical">
+        <Column>
+          <Group title="Vendor{Creditor}" style="fullWidth">
+            <Reference foreignKey="VendorNumber_Vendor" />
+            <Field source="Name2" appearance="maximized" />
+            <Field source="Name3" appearance="maximized" />
+            <ZipCity citySource="PostalDistrict" zipSource="ZipCode" appearance="maximized" />
+            <Field source="Name4" appearance="maximized" />
+            <Field source="Name5" appearance="maximized" />
+            <Field source="Attention" />
+            <Field source="Country" />
+            <Field source="Telephone" />
+            <Field source="Telefax" />
+            <Field source="Telex" />
+            <Field source="ElectronicMailAddress" />
+            <Field source="Giro" />
+            <Field source="Responsible" />
+          </Group>
+          <Group title="General Information">
+            <Field source="DepartmentNumber" />
+            <Field source="Language" />
+            <Field source="VendorGroup" />
+            <Field source="Currency" />
+            <Field source="Disclosable" />
+            <Field source="ActiveStatus" />
+            <If condition="ActiveStatus = ActiveType'Active">
+              <Field source="FirstActivationDate" />
+            </If>
+            <ElseIf condition="FirstActivationDate != NullDate">
+              <Interval firstSource="FirstActivationDate" lastSource="LastInactivationDate" title="Active Period" />
+            </ElseIf>
+          </Group>
+          <Group>
+            <Link workspace="Vendors" template="More details..." title="" tooltip="Vendor workspace" appearance="maximized" icon="WorkspaceLink">
+              <Waypoint pane="VendorCard_Filter">
+                <Restriction template="Selected Vendor" expression="VendorNumber=target.VendorNumber" />
+                <Focus>
+                  <Match field="VendorNumber" value="VendorNumber" />
+                </Focus>
+              </Waypoint>
+              <Target pane="VendorCard_Overview" />
+            </Link>
+          </Group>
+        </Column>
+      </Form>
+    </UpperPane>
+  </Layout>
+</MDML>
