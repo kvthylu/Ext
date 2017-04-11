@@ -123,13 +123,12 @@
             <Field source="TelexVar" title="Website" />
             <Field source="ElectronicMailAddressVar" title="E-mail{native}" />
           </Group>
-          <Group title="Statistics">
-            <Reference foreignKey="Specification1Name_Specification1" />
-            <Field source="SelectedOption10" size="large" title="Selected Value 10{Customer}" />
-            <Field source="SelectedOption5" size="large" title="Selected Value 5{Customer}" />
-            <Field source="FiscalYearEndMonth" size="large" />
-            <Field source="CustomerPopup1" size="large" title="Popup 1{Customer}" />
-<!--             <Field source="CustomerPopup2" size="large" title="Popup 2{Customer}" /> -->
+          <Group title="Responsible Staff">
+            <Reference foreignKey="SalesPersonNumber_Employee" />
+            <Reference foreignKey="Specification4Name_Specification4" title="Managing Partner"/>
+            <Reference foreignKey="AccountManagerNumber_Employee" />
+            <Reference foreignKey="EmployeeNumber6_Employee" />
+            <Reference foreignKey="EmployeeNumber7_Employee" />
           </Group>
         </Column>
         <Column>
@@ -156,12 +155,19 @@
               </If>
             </Group>
           </If>
-          <Group title="Responsible Staff">
-            <Reference foreignKey="AccountManagerNumber_Employee" />
-            <Reference foreignKey="SalesPersonNumber_Employee" />
-            <Reference foreignKey="EmployeeNumber1_Employee" title="Managing Partner" />
-            <Reference foreignKey="EmployeeNumber6_Employee" />
-            <Reference foreignKey="EmployeeNumber7_Employee" />
+          <Group title="Statistics">
+<!--             <Reference foreignKey="Specification1Name_Specification1" /> -->
+            <Field source="SelectedOption10" size="large" title="Selected Value 10{Customer}" />
+            <Field source="SelectedOption5" size="large" title="Selected Value 5{Customer}" />
+            <Field source="FiscalYearEndMonth" size="large" />
+            <Field source="CustomerPopup1" size="large" title="Popup 1{Customer}" />
+<!--             <Field source="CustomerPopup2" size="large" title="Popup 2{Customer}" /> -->
+            <Field source="CustomerRemark2" size="large" title="Alternative Client Group"/>
+          </Group>
+          <Group title="Tax Credits Obtained">
+            <Field source="SelectedCustomerJobOption1" appearance="maximized"/>
+            <Field source="SelectedCustomerJobOption2" appearance="maximized" />
+            <Field source="SelectedCustomerJobOption3" appearance="maximized" />
           </Group>
         </Column>
       </Form>

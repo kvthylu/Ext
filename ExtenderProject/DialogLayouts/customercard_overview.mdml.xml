@@ -7,6 +7,9 @@
         <Trigger name="CreateCustomerTrigger">
           <Assign source="OptionListNumber5" value="'Customer Entity'" />
           <Assign source="OptionListNumber10" value="'NAICS'" />
+          <Assign source="CustomerJobOptionListNumber1" value="'TaxCredits'" />
+          <Assign source="CustomerJobOptionListNumber2" value="'TaxCredits'" />
+          <Assign source="CustomerJobOptionListNumber3" value="'TaxCredits'" />
         </Trigger>
       </Define>
       <Wizard name="CreateCustomerWizard" title="Create Customer">
@@ -31,16 +34,23 @@
             <Field source="CustomerPopup5" title="Invoice Delivery Method" />
           </Group>
           <Group title="Responsible Staff">
+            <Reference foreignKey="SalesPersonNumber_Employee" />
+            <Reference foreignKey="Specification4Name_Specification4" title="Managing Partner"/>
             <Reference foreignKey="AccountManagerNumber_Employee" />
             <Reference foreignKey="EmployeeNumber6_Employee" />
             <Reference foreignKey="EmployeeNumber7_Employee" />
-            <Reference foreignKey="SalesPersonNumber_Employee" />
           </Group>
           <Group title="Statistics">
-            <Reference foreignKey="Specification1Name_Specification1" />
+<!--             <Reference foreignKey="Specification1Name_Specification1" /> -->
             <Field source="SelectedOption10" size="large" />
             <Field source="SelectedOption5" size="large" />
             <Field source="FiscalYearEndMonth" size="large" />
+            <Field source="CustomerRemark2" size="large" title="Alternative Client Group"/>
+          </Group>
+          <Group title="Tax Credits Obtained">
+            <Field source="SelectedCustomerJobOption1" appearance="maximized"/>
+            <Field source="SelectedCustomerJobOption2" appearance="maximized" />
+            <Field source="SelectedCustomerJobOption3" appearance="maximized" />
           </Group>
         </Column>
       </Form>
