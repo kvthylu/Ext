@@ -1510,9 +1510,6 @@
   </Menu>
   <Auto>
     <Workspace title="To-Dos" source="NotificationsView" icon="notification" pluginId="com.maconomy.client.workspace.viewbased" />
-    <If condition="hasRole('Engagement Manager')">
-      <Workspace source="Jobs" title="Jobs" />
-    </If>
     <If condition="hasRole('Employee')">
       <If condition="isEnvVarDefined('user.employeeinfo.CompanyNumber') and maconomy:booleanSysPar('EnableStandardExtensions', stringEnvVar('user.employeeinfo.CompanyNumber'))">
         <Workspace title="Time &amp; Expenses" source="expensejustification:TimeAndExpenseRegistration" />
