@@ -45,7 +45,7 @@
             <Field source="SelectedOption10" size="large" />
             <Field source="SelectedOption5" size="large" />
             <Field source="FiscalYearEndMonth" size="large" />
-            <Field source="CustomerRemark2" size="large" title="Alternative Client Group"/>
+            <Field source="CustomerRemark2" size="large" title="Additional Client Group"/>
           </Group>
           <Group title="Tax Credits Obtained">
             <Field source="SelectedCustomerJobOption1" appearance="maximized"/>

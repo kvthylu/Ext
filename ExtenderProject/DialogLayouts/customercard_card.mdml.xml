@@ -162,7 +162,7 @@
             <Field source="FiscalYearEndMonth" size="large" />
             <Field source="CustomerPopup1" size="large" title="Popup 1{Customer}" />
 <!--             <Field source="CustomerPopup2" size="large" title="Popup 2{Customer}" /> -->
-            <Field source="CustomerRemark2" size="large" title="Alternative Client Group"/>
+            <Field source="CustomerRemark2" size="large" title="Additional Client Group"/>
           </Group>
           <Group title="Tax Credits Obtained">
             <Field source="SelectedCustomerJobOption1" appearance="maximized"/>
