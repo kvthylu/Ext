@@ -6,7 +6,7 @@
         <ControlBar>
           <Selection default="MyJobs">
             <Option title="My Jobs" name="MyJobs" restriction="ProjectManagerNumber = UserEmployeeNumber()" />
-            <Option title="Department Jobs" name="DepartmentJobs" restriction="if (UserEmployeeNumber() != '') then (LocationName = stringEnvVar('user.employeeinfo.EntityName') and Template = false) else false" />
+            <Option title="Department Jobs" name="DepartmentJobs" restriction="if (UserEmployeeNumber() != '') then (LocationName = stringEnvVar('user.employeeinfo.EntityName') and Specification2Name = stringEnvVar('user.employeeinfo.Specification3Name') and Template = false) else false" />
             <Option title="All Jobs" name="AllJobs" />
           </Selection>
         </ControlBar>
@@ -43,7 +43,7 @@
         <ControlBar>
           <Selection default="AllJobs">
             <Option title="My Jobs" name="MyJobs" restriction="ProjectManagerNumber = UserEmployeeNumber()" />
-            <Option title="Department Jobs" name="DepartmentJobs" restriction="if (UserEmployeeNumber() != '') then (LocationName = stringEnvVar('user.employeeinfo.EntityName') and Template = false) else false" />
+            <Option title="Department Jobs" name="DepartmentJobs" restriction="if (UserEmployeeNumber() != '') then (LocationName = stringEnvVar('user.employeeinfo.EntityName') and Specification2Name = stringEnvVar('user.employeeinfo.Specification3Name') and Template = false) else false" />
             <Option title="All Jobs" name="AllJobs" />
           </Selection>
         </ControlBar>
@@ -70,7 +70,7 @@
         <ControlBar>
           <Selection default="MyJobs" restriction="not BlockedForTimeRegistrations or not maconomy:booleanSysPar('@RejectRegOnAmountActivitiesOnTimeSheets')">
             <Option title="My Jobs" name="MyJobs" restriction="ProjectManagerNumber = UserEmployeeNumber()" />
-            <Option title="Department Jobs" name="DepartmentJobs" restriction="if (UserEmployeeNumber() != '') then (LocationName = stringEnvVar('user.employeeinfo.EntityName') and Template = false) else false" />
+            <Option title="Department Jobs" name="DepartmentJobs" restriction="if (UserEmployeeNumber() != '') then (LocationName = stringEnvVar('user.employeeinfo.EntityName') and Specification2Name = stringEnvVar('user.employeeinfo.Specification3Name') and Template = false) else false" />
             <Option title="All Jobs" name="AllJobs" />
           </Selection>
         </ControlBar>
@@ -115,7 +115,7 @@
         <ControlBar>
           <Selection default="MyJobs" restriction="Template = false">
             <Option title="My Jobs" name="MyJobs" restriction="ProjectManagerNumber = UserEmployeeNumber()" />
-            <Option title="Department Jobs" name="DepartmentJobs" restriction="if (UserEmployeeNumber() != '') then (LocationName = stringEnvVar('user.employeeinfo.EntityName') and Template = false) else false" />
+            <Option title="Department Jobs" name="DepartmentJobs" restriction="if (UserEmployeeNumber() != '') then (LocationName = stringEnvVar('user.employeeinfo.EntityName') and Specification2Name = stringEnvVar('user.employeeinfo.Specification3Name') and Template = false) else false" />
             <Option title="All Jobs" name="AllJobs" />
           </Selection>
         </ControlBar>
