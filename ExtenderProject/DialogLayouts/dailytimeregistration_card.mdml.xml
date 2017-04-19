@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MDML xmlns="http://www.deltek.com/ns/mdml" version="0.97">
+  <Layout name="dailytimeregistration_card" source="DailyTimeRegistration">
+    <UpperPane>
+      <Define>
+        <Style name="hours" size="tiny" />
+        <Style name="valueWarning" ref="trafficlightForegroundRed" condition="fieldValue() lt 0" />
+        <Style name="valueOk" ref="trafficlightForegroundGreen" condition="fieldValue() ge 0" />
+        <Style name="HighlightOtherEmployee" ref="attentionField" condition="EmployeeNumberVar != CurrentEmployeeNumberVar" />
+      </Define>
+      <Wizard name="CopyTimeSheetWizard" title="Copy Time Sheet">
+        <Page form="CopyTimeSheetPage1" title="Select Time Sheet to Copy" />
+      </Wizard>
+      <Form name="Full">
+        <Actions>
+          <Action source="SubmitTimeSheet" title="Submit" />
+          <Action source="ReopenTimeSheet" title="Reopen" />
+          <Action source="CopyTimeSheet" wizard="CopyTimeSheetWizard" />
+          <If condition="isActionEnabled('CreateTimeSheet')">
+            <Action source="CreateTimeSheet" />
+          </If>
+          <Action source="PrintTimeSheet" />
+          <Create />
+          <Update />
+          <Delete />
+        </Actions>
+        <Column>
+          <Group name="Calendar">
+            <Calendar source="DateVar" inputField="false" autoSelection="true" appearance="maximized">
+              <Style fontSize="medium">
+                <Switch source="TimeSheetStatusVar">
+                  <Case char="1">
+                    <Tooltip text="Due" />
+                    <Style ref="calendarTimeDue" />
+                  </Case>
+                  <Case char="2">
+                    <Tooltip text="Submitted" />
+                    <Style ref="calendarTimeSubmitted" />
+                  </Case>
+                  <Case char="3">
+                    <Tooltip text="Approved" />
+                    <Style ref="calendarTimeApproved" />
+                  </Case>
+                  <Case char="4">
+                    <Tooltip text="Line Rejected by Project Manager" />
+                    <Style ref="calendarTimeRejected" />
+                  </Case>
+                  <Case char="5">
+                    <Tooltip text="Line Rejected by Project Manager" />
+                    <Style ref="calendarTimeRejected" />
+                  </Case>
+                  <Case char="6">
+                    <Tooltip text="Line Rejected by Project Manager" />
+                    <Style ref="calendarTimeRejected" />
+                  </Case>
+                  <Case char="7">
+                    <Tooltip text="Fully Approved" />
+                    <Style ref="calendarTimeSubmitted" />
+                  </Case>
+                  <Case char="8">
+                    <Tooltip text="Header Rejected" />
+                    <Style ref="calendarTimeRejected" />
+                  </Case>
+                  <Case char="9">
+                    <Tooltip text="Header Rejected" />
+                    <Style ref="calendarTimeRejected" />
+                  </Case>
+                </Switch>
+              </Style>
+            </Calendar>
+          </Group>
+        </Column>
+        <Column>
+          <Row>
+            <Group>
+              <Reference foreignKey="Card_EmployeeNumber_Employee" style="HighlightOtherEmployee" >
+                <Style bold="true">
+                  <Label bold="true" />
+                </Style>
+              </Reference>
+              <Field title="Date" source="DateVar" open="false">
+                <Style bold="true">
+                  <Label bold="true" />
+                </Style>
+              </Field>
+              <Field title="Time Unit" source="TimeRegistrationUnitVar" open="false">
+                <Style bold="true">
+                  <Label bold="true" />
+                </Style>
+              </Field>
+            </Group>
+          </Row>
+          <Row>
+            <Group title="Legend">
+              <Grid>
+                <Row title="     " cells="|      |;|Due|" style="calendarTimeDueLegend" />
+                <Row title="     " cells="|      |;|Submitted|" style="calendarTimeSubmittedLegend" />
+              </Grid>
+            </Group>
+          </Row>
+        </Column>
+        <Column>
+          <Row>
+            <Group title="Time Information" style="hours">
+              <Field title="Total" source="TotalNumberVar" />
+              <Field title="Fixed" source="FixedNumberVar" />
+              <Field title="Balance" source="OvertimeNumberVar" style="valueWarning,valueOk" />
+              <Field title="Billable Hours" source="InvoiceableTimeDayTotalVar" />
+              <Field title="Billable %" source="InvoiceablePercentageDayVar" />
+            </Group>
+            <Group>
+              <Style size="large" />
+              <If condition="TimeRegistrationUnit = TimeRegistrationUnitType'Hours">
+                <Element type="timeDuration">
+                  <Widget source="PieChartWidget" />
+                  <DataSource>
+                    <Base legends="t'Hours'">
+                      <Category legends="t'Billable';t'Non-Billable'">
+                        <Series values="InvoiceableTimeDayTotalVar" />
+                        <Series values="TotalNumberVar - InvoiceableTimeDayTotalVar" />
+                      </Category>
+                    </Base>
+                  </DataSource>
+                </Element>
+              </If>
+              <Else>
+                <Element type="real">
+                  <Widget source="PieChartWidget" />
+                  <DataSource>
+                    <Base legends="t'Days'">
+                      <Category legends="t'Billable';t'Non-Billable'">
+                        <Series values="InvoiceableTimeDayTotalVar" />
+                        <Series values="TotalNumberVar - InvoiceableTimeDayTotalVar" />
+                      </Category>
+                    </Base>
+                  </DataSource>
+                </Element>
+              </Else>
+            </Group>
+          </Row>
+        </Column>
+      </Form>
+      <Form name="CopyTimeSheetPage1">
+        <Actions>
+          <Action source="CopyTimeSheet" />
+          <Update />
+        </Actions>
+        <Row>
+          <Group title="Copy Time Sheet">
+            <Field source="CopyFromDateVar" title="Date" />
+          </Group>
+        </Row>
+      </Form>
+    </UpperPane>
+  </Layout>
+</MDML>

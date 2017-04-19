@@ -160,7 +160,6 @@
               <Reference foreignKey="EntityName_Entity" keySource="EntityName" />
               <Reference foreignKey="PurposeName_Purpose" keySource="PurposeName" />
               <Reference foreignKey="Specification5Name_Specification5" keySource="Specification5Name" />
-              <Field source="LocalSpec2Name" />
             </Group>
             <Group title="Related Employees">
               <Reference foreignKey="SuperiorEmployee_Employee" title="Supervisor" />
