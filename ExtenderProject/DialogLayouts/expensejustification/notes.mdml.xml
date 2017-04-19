@@ -5,7 +5,7 @@
       <Define>
         <Style name="EnteredValueMandatory" ref="attentionField" condition="JustificationMandatoryVar = true and Format != FormatType'DateValue and OptionListNumber = '' and parent.Submitted = false and EnteredValueVar = ''" />
         <Style name="Date1Mandatory" ref="attentionField" condition="JustificationMandatoryVar = true and Format = FormatType'DateValue and parent.Submitted = false and Date1 = date(nulldate)" />
-        <Style name="OptionMandatory" ref="attentionField" condition="JustificationMandatoryVar = true and OptionListNumber != '' and parent.Submitted = false and Date1 = date(nulldate)" />
+        <Style name="OptionMandatory" ref="attentionField" condition="JustificationMandatoryVar = true and OptionListNumber != '' and parent.Submitted = false and String1 = ''" />
       </Define>
       <Table name="Justification">
         <Actions>
