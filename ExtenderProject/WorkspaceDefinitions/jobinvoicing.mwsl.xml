@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MWSL xmlns="http://www.deltek.com/ns/mwsl" version="0.23">
+  <Workspace name="JobInvoicing" title="Job Invoicing">
+    <Define>
+      <Function name="enableLongTextEmulation" type="boolean" value="isEnvVarDefined('user.employeeinfo.CompanyNumber') and isEnvVarDefined('system.parameters.EnableLongTextEmulationInWorkspaces') and maconomy:booleanSysPar('EnableLongTextEmulationInWorkspaces', stringEnvVar('user.employeeinfo.CompanyNumber'))" />
+    </Define>
+    <Card name="InvoiceSelection" source="InvoiceSelection" layout="invoiceselection_wip" view="Demo">
+      <Expansions>
+        <With>
+          <Table title="WIP Selection" layout="invoiceselection_selection" view="Demo_Blanket_Invoice_Selection(false)">
+            <Expansions minimized="true">
+              <Bind foreignKey="primary">
+                <Table source="ItemizeInvoiceSelection" title="Entries" layout="itemizeinvoiceselection_entries" view="Demo_Blanket_Invoice_Selection(false)" />
+              </Bind>
+            </Expansions>
+          </Table>
+          <Table layout="InvoiceSelection_Table" title="Direct Invoicing" view="Demo_Direct_Invoicing">
+            <Expansions minimized="true">
+              <Bind foreignKey="primary">
+                <Table source="ItemizeInvoiceSelection" layout="ItemizeInvoiceSelection_Table" title="Entries" view="Demo_Direct_Invoicing" />
+              </Bind>
+            </Expansions>
+          </Table>
+        </With>
+      </Expansions>
+      <Assistants parentSize="huge">
+        <With>
+          <Card view="Overview" layout="invoiceselection_overview" title="Overview" />
+          <Card view="Invoice" layout="invoiceselection_invoice" title="Invoice" />
+          <Card view="OnAccountReduction" layout="invoiceselection_onaccountreduction" title="On Account Reduction" />
+          <Card view="WriteUpDown" layout="invoiceselection_writeupdown" title="Write-Up/Down" />
+          <Card view="Charges" layout="InvoiceSelection_Charges" title="Charges" />
+          <Card view="Status" layout="invoiceselection_status" title="Draft Status" />
+        </With>
+      </Assistants>
+    </Card>
+    <Card source="OnAccountInvoiceSelection" layout="OnAccountInvoiceSelection_Card" title="Invoice On Account" view="Demo">
+      <Expansions parentSize="medium">
+        <With>
+          <Table title="Specification" layout="OnAccountInvoiceSelection_Table" view="Demo" />
+        </With>
+      </Expansions>
+      <Assistants parentSize="huge">
+        <With>
+          <Card view="Charges" layout="OnAccountInvoiceSelection_Charges" title="Charges" />
+        </With>
+      </Assistants>
+    </Card>
+    <Card source="JobInvoicesOnAccount" title="On Account Reconciliation" view="Demo">
+      <Expansions parentSize="medium">
+        <With>
+          <Table title="Invoices On Account, Overview" view="Demo_Overview">
+            <Expansions minimized="true">
+              <Bind foreignKey="primary">
+                <Table source="ShowReconciliationOfJobInvoiceOnAccount" title="Reconciliation" view="Demo" />
+              </Bind>
+            </Expansions>
+          </Table>
+          <Table title="Invoices On Account, All Fields" view="Demo_Detailed">
+            <Expansions minimized="true">
+              <Bind foreignKey="primary">
+                <Table source="ShowReconciliationOfJobInvoiceOnAccount" title="Reconciliation" view="Demo" />
+              </Bind>
+            </Expansions>
+          </Table>
+        </With>
+      </Expansions>
+    </Card>
+    <Card source="InvoicingPlans" layout="InvoicingPlans_Card" title="Plan" view="Demo">
+      <Expansions parentSize="medium">
+        <With>
+          <Table layout="InvoicingPlans_Table" title="Specification, Overview" view="Demo_Overview" />
+          <Table layout="InvoicingPlans" title="Detailed View" view="Full" />
+        </With>
+      </Expansions>
+    </Card>
+    <Hidden name="Invoice_Editing" source="Jobs">
+      <Restrict reversedForeignKey="InvoiceEditingJobNumber_JobHeader">
+        <Workspace source="DraftInvoices" />
+      </Restrict>
+    </Hidden>
+    <Table name="InvoiceHistory_Table" layout="JobInvoiceHistory_Table" source="JobInvoiceHistory" view="Demo" title="Invoice History">
+      <Expansions>
+        <Bind foreignKey="InvoiceNumber_Invoice">
+          <Card source="ShowJobInvoice" view="Demo" hidden="enableLongTextEmulation() or parent.DebitCredit != DebitCreditType'\Debit\">
+            <Expansions>
+              <With>
+                <Table title="Draft Editing" />
+              </With>
+              <Bind foreignKey="primary">
+                <Table source="JobInvoiceOverview" view="Demo" title="WIP Decisions" hidden="hasNoRecords()" />
+              </Bind>
+              <Bind foreignKey="primary">
+                <Table source="ShowJobInvoiceReconciliations" view="Full" title="On Account Reconciliation" hidden="hasNoRecords()" />
+              </Bind>
+              <Bind foreignKey="primary">
+                <Table source="ShowJobPreInvoiceEvents" view="Standard" title="Pre-Invoice Events" hidden="not parent.OriginallyPreInvoice" />
+              </Bind>
+            </Expansions>
+          </Card>
+          <Card source="MaconomyLongText:ShowJobInvoice" layout="Maconomy:ShowJobInvoice" view="Demo" hidden="not enableLongTextEmulation() or parent.DebitCredit != DebitCreditType'\Debit\">
+            <Expansions>
+              <With>
+                <Table layout="Maconomy:ShowJobInvoice" view="Demo" title="Draft Editing" />
+              </With>
+              <Bind foreignKey="primary">
+                <Table source="JobInvoiceOverview" view="Demo" title="WIP Decisions" hidden="hasNoRecords()" />
+              </Bind>
+              <Bind foreignKey="primary">
+                <Table source="ShowJobInvoiceReconciliations" view="Full" title="On Account Reconciliation" hidden="hasNoRecords()" />
+              </Bind>
+              <Bind foreignKey="primary">
+                <Table source="ShowJobPreInvoiceEvents" view="Standard" title="Pre-Invoice Events" hidden="not parent.OriginallyPreInvoice" />
+              </Bind>
+            </Expansions>
+          </Card>
+          <Card source="ShowJobCreditMemo" view="Demo" hidden="enableLongTextEmulation() or parent.DebitCredit != DebitCreditType'\Credit\">
+            <Expansions>
+              <With>
+                <Table title="Draft Editing" />
+              </With>
+              <Bind foreignKey="primary">
+                <Table source="JobInvoiceOverview" view="Demo" title="WIP Decisions" hidden="hasNoRecords()" />
+              </Bind>
+              <Bind foreignKey="primary">
+                <Table source="ShowJobInvoiceReconciliations" view="Full" title="On Account Reconciliation" hidden="hasNoRecords()" />
+              </Bind>
+            </Expansions>
+          </Card>
+          <Card source="MaconomyLongText:ShowJobCreditMemo" layout="Maconomy:ShowJobCreditMemo" view="Demo" hidden="not enableLongTextEmulation() or parent.DebitCredit != DebitCreditType'\Credit\">
+            <Expansions>
+              <With>
+                <Table layout="Maconomy:ShowJobCreditMemo" view="Demo" title="Draft Editing" />
+              </With>
+              <Bind foreignKey="primary">
+                <Table source="JobInvoiceOverview" view="Demo" title="WIP Decisions" hidden="hasNoRecords()" />
+              </Bind>
+              <Bind foreignKey="primary">
+                <Table source="ShowJobInvoiceReconciliations" view="Full" title="On Account Reconciliation" hidden="hasNoRecords()" />
+              </Bind>
+            </Expansions>
+          </Card>
+        </Bind>
+      </Expansions>
+    </Table>
+    <Card source="BillToCustomerDistribution" title="Split Billing" view="Demo">
+      <Expansions parentSize="small">
+        <With>
+          <Table title="Selection on Bill To Customers" view="Demo_Selection" />
+          <Table title="On Account Information" view="Demo_OnAccountReconciliation" />
+          <Table title="Setup of Bill To Customers" view="Demo_Setup" />
+        </With>
+      </Expansions>
+    </Card>
+    <Card source="JobInvoiceAllocation" title="Job Invoice Allocation" view="Demo" hidden="not parent.InvoiceAllocation or parent.InvoiceAllocationOnMainJob">
+      <Expansions>
+        <With>
+          <Table title="Selection, Standard View" view="Demo_Standard_View">
+            <Expansions minimized="true">
+              <Bind foreignKey="primary">
+                <Table source="ItemizeJobInvoiceAllocation" title="Entries" view="Full" />
+              </Bind>
+            </Expansions>
+          </Table>
+          <Table title="Selection, Billing Prices" view="Demo_Billing_Prices">
+            <Expansions minimized="true">
+              <Bind foreignKey="primary">
+                <Table source="ItemizeJobInvoiceAllocation" title="Entries" view="Full" />
+              </Bind>
+            </Expansions>
+          </Table>
+          <Table title="Selection, Without Registrations" view="Demo_Without_Registrations">
+            <Expansions minimized="true">
+              <Bind foreignKey="primary">
+                <Table source="ItemizeJobInvoiceAllocation" title="Entries" view="Full" />
+              </Bind>
+            </Expansions>
+          </Table>
+        </With>
+        <Bind foreignKey="primary">
+          <Table source="JobInvoicesOnAccount" title="Invoices On Account" view="Demo_Overview">
+            <Expansions minimized="true">
+              <Bind foreignKey="primary">
+                <Table source="ShowReconciliationOfJobInvoiceOnAccount" title="Reconciliation" view="Demo" />
+              </Bind>
+            </Expansions>
+          </Table>
+        </Bind>
+      </Expansions>
+    </Card>
+    <Hidden source="JobInvoiceAllocation">
+      <Restrict reversedForeignKey="JobNumber_JobHeader">
+        <Filter name="Allocation_History" source="ShowJobInvoiceAllocationReconciliations" title="Allocation History" view="Demo" hidden="not parent.parent.InvoiceAllocation or parent.parent.InvoiceAllocationOnMainJob">
+          <With>
+            <Hidden>
+              <Expansions>
+                <With>
+                  <Table view="Full" />
+                </With>
+                <Bind foreignKey="primary">
+                  <Table source="ShowJobInvoiceAllocationEntries" view="Demo" />
+                </Bind>
+              </Expansions>
+            </Hidden>
+          </With>
+        </Filter>
+      </Restrict>
+    </Hidden>
+    <Card source="JobReallocationByJob" title="Reallocate Entries" view="Demo">
+      <Expansions>
+        <With>
+          <Table title="Entries" view="Demo" />
+        </With>
+      </Expansions>
+    </Card>
+    <Card source="EmployeeRevenueDistribution" title="Employee Revenue Distribution" view="Standard">
+      <Expansions>
+        <With>
+          <Table view="Full" />
+        </With>
+      </Expansions>
+    </Card>
+  </Workspace>
+</MWSL>

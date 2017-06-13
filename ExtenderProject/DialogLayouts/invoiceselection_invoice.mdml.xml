@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MDML xmlns="http://www.deltek.com/ns/mdml" version="0.97">
+  <Layout name="invoiceselection_invoice" source="invoiceselection">
+    <UpperPane>
+      <Form name="Invoice">
+        <Actions>
+          <Update />
+        </Actions>
+        <Row>
+          <Column>
+            <Group title="Invoice">
+              <Field source="InvoiceSelectionType" />
+              <Boolean source="CombineTMOnAccountByDefault" />
+              <Field source="PreferredInvoiceDateVar" title="Preferred Invoice Date" size="small" />
+              <Field source="InvoiceLayout" size="small" />
+              <Field source="DetailedInvoiceLayout" size="small" />
+              <Boolean source="IncludeDetailedInvoiceSpecificationVar" title="Include Detailed Specification" />
+            </Group>
+          </Column>
+          <Column>
+            <Group title="Show on Invoice">
+              <Boolean source="ShowCustomerBalancesOnInvoiceVar" title="Balance" />
+              <Boolean source="ShowCustomerStatementOnInvoiceVar" title="Statement" />
+              <Boolean source="ShowCustomerAgingOnInvoiceVar" title="Aging" />
+              <Boolean source="ShowWriteDownSeparatelyVar" title="Write-Down" />
+            </Group>
+          </Column>
+        </Row>
+      </Form>
+    </UpperPane>
+  </Layout>
+</MDML>
