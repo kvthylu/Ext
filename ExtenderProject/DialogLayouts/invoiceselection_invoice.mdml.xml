@@ -19,7 +19,6 @@
           </Column>
           <Column>
             <Group title="Show on Invoice">
-              <Boolean source="ShowCustomerBalancesOnInvoiceVar" title="Balance" />
               <Boolean source="ShowCustomerStatementOnInvoiceVar" title="Statement" />
               <Boolean source="ShowCustomerAgingOnInvoiceVar" title="Aging" />
               <Boolean source="ShowWriteDownSeparatelyVar" title="Write-Down" />
