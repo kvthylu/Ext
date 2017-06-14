@@ -18,11 +18,7 @@
             </Group>
           </Column>
           <Column>
-            <Group title="Show on Invoice">
-              <Boolean source="ShowCustomerStatementOnInvoiceVar" title="Statement" />
-              <Boolean source="ShowCustomerAgingOnInvoiceVar" title="Aging" />
-              <Boolean source="ShowWriteDownSeparatelyVar" title="Write-Down" />
-            </Group>
+            <Group title="Show on Invoice" />
           </Column>
         </Row>
       </Form>
