@@ -73,7 +73,7 @@
         <Column>
           <Row>
             <Group>
-              <Reference foreignKey="Card_EmployeeNumber_Employee" style="HighlightOtherEmployee" >
+              <Reference foreignKey="Card_EmployeeNumber_Employee" style="HighlightOtherEmployee">
                 <Style bold="true">
                   <Label bold="true" />
                 </Style>

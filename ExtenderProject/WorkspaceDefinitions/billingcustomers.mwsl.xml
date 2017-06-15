@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MWSL xmlns="http://www.deltek.com/ns/mwsl" version="0.23">
+  <Workspace name="billingcustomers" title="Customers">
+    <Define>
+      <Function name="hasAnalytix" value="stringSysPar('BPMServerURL') != ''" type="boolean" />
+    </Define>
+    <Filter source="CustomerCard" layout="customercard_filter" name="Customers_Filter" view="CustomerHomeWithAllCustomersDefault">
+      <Formation>
+        <Section title="Home">
+          <Mount>
+            <Hidden source="ImportCustomers" />
+          </Mount>
+          <Bind foreignKey="primary">
+            <Workspace source="BillingCustomerHome" />
+          </Bind>
+        </Section>
+        <Section title="Lookup">
+          <Bind foreignKey="primary">
+            <Card source="GlobalPeriodicCustomerStatement" view="FromCustomerContext" title="Periodic Statements">
+              <Expansions parentSize="small">
+                <With>
+                  <Table layout="GlobalPeriodicCustomerStatement_Table" view="Full" title="Entries">
+                    <Expansions minimized="true">
+                      <Bind foreignKey="primary">
+                        <Workspace source="CustomerEntry" />
+                      </Bind>
+                    </Expansions>
+                  </Table>
+                </With>
+              </Expansions>
+            </Card>
+          </Bind>
+          <Restrict reversedForeignKey="CustomerNumber_Customer">
+            <Filter source="ShowCustomerReconciliations" layout="ShowCustomerReconciliations_Filter" view="FullAnalysis" title="Entries" name="ShowCustomerReconciliations_Filter">
+              <Expansions minimized="true">
+                <Bind foreignKey="primary">
+                  <Workspace source="CustomerEntry" />
+                </Bind>
+              </Expansions>
+            </Filter>
+          </Restrict>
+          <Restrict reversedForeignKey="CustomerNumber_Customer">
+            <Filter source="ShowAllInvoices" layout="ShowAllInvoices_Filter" view="Customer" title="Invoices" name="ShowAllInvoices_Filter">
+              <Expansions minimized="true">
+                <Bind foreignKey="primary">
+                  <Workspace source="InvoiceOrigin" />
+                </Bind>
+              </Expansions>
+            </Filter>
+          </Restrict>
+          <Restrict reversedForeignKey="CustomerNumber_Customer">
+            <Filter source="ShowCustomerPaymentJournals" layout="ShowCustomerPaymentJournals_Filter" view="CustomerPayments" title="Payments">
+              <Expansions minimized="true">
+                <With>
+                  <Card layout="ShowCustomerPaymentJournals" view="Full">
+                    <Expansions parentSize="huge">
+                      <With>
+                        <Table layout="ShowCustomerPaymentJournals" view="Full" hidden="hasNoRecords()" />
+                      </With>
+                    </Expansions>
+                  </Card>
+                </With>
+              </Expansions>
+            </Filter>
+          </Restrict>
+        </Section>
+        <Section title="Reports" hidden="not hasAnalytix()">
+          <Mount>
+            <Card source="ReportCriteria" view="Analytix_ARAging_Embedded" title="A/R Aging" name="ARAging" />
+            <Card source="ReportCriteria" view="Analytix_ARRollforward_Embedded" title="A/R Rollforward" name="ARRollforward" />
+            <Card source="ReportCriteria" layout="analytix_cashreceipts_embedded" view="Analytix_CashReceipts_Embedded" title="Cash Receipts" name="CashReceipts" />
+            <Card source="ReportCriteria" view="Analytix_CustomerProfitability_Embedded" title="Customer Profitability" name="CustomerProfitability" />
+            <Card source="ReportCriteria" view="Analytix_DailyFlash_Embedded" title="Daily Flash" name="DailyFlash" />
+            <Card source="ReportCriteria" view="Analytix_InvoicingWorksheet_Embedded" title="Invoicing Worksheet" name="InvoicingWorksheet" />
+            <Card source="ReportCriteria" layout="analytix_wipagingcustomer_embedded" view="Analytix_WIPAgingCustomer_Embedded" title="WIP Aging" name="WIPAging" />
+            <Card source="ReportCriteria" layout="Analytix_WIPRollforwardCustomer_Embedded" view="Analytix_WIPRollforwardCustomer_Embedded" title="WIP Rollforward" name="WIPRollforward" />
+            <Card source="ReportCriteria" view="Analytix_RevenueAnalysis_Embedded" title="Revenue Analysis" name="RevenueAnalysis" />
+          </Mount>
+        </Section>
+      </Formation>
+    </Filter>
+  </Workspace>
+</MWSL>

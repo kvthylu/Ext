@@ -12,28 +12,19 @@
         <Style name="AlertOpen" ref="trafficlightYellow" condition="IsOpen()" />
       </Define>
       <Form name="Overview" title="Invoice">
-        <Actions all="true" >
-          <Action title="Email Invoice" source="EmailOnAction" icon="Mail" >
+        <Actions all="true">
+          <Action title="Email Invoice" source="EmailOnAction" icon="Mail">
             <Argument valueString="PrintOriginal" parameter="Action" />
-
             <Argument value="StringSysPar('MailPortAndServer', CompanyNumber)" parameter="MailServer" />
             <Argument value="IntegerSysPar('MailPortAndServer', CompanyNumber)" parameter="MailPort" />
             <Argument valueString="eml" parameter="ShowMessageInFormat" />
             <Argument value="false" parameter="ShowResultToUser" />
-            
             <Argument value="envVar('user.employeeinfo.ElectronicMailAddress')" parameter="Sender" />
             <Argument value="envVar('user.employeeinfo.ElectronicMailAddress')" parameter="BccRecipients" />
             <Argument value="PayerElectronicMailAddress" parameter="Recipients" />
-            
             <Argument value="'Invoice no. ' + InvoiceNumber" parameter="Subject" />
-            <Argument value="'Dear ' + PayerAttention + '\n\n'
-      + 'Please find enclosed copy of invoice no. ' + InvoiceNumber + ', due by ' + DueDate + '. \n\n'
-       + 'Thanks in advance ' + '\n'
-       + envVar('user.employeeinfo.Name1') + '\n'
-       + 'Phone: ' + envVar('user.employeeinfo.Telephone') + '\n'
-       + SettlingCompanyNameVar + '\n'" parameter="Body" />
+            <Argument value="'Dear ' + PayerAttention + '\n\n'       + 'Please find enclosed copy of invoice no. ' + InvoiceNumber + ', due by ' + DueDate + '. \n\n'        + 'Thanks in advance ' + '\n'        + envVar('user.employeeinfo.Name1') + '\n'        + 'Phone: ' + envVar('user.employeeinfo.Telephone') + '\n'        + SettlingCompanyNameVar + '\n'" parameter="Body" />
           </Action>
-        
         </Actions>
         <Column>
           <If condition="DebitCredit = DebitCreditType'Credit">
@@ -125,16 +116,7 @@
             <Field source="PayerTelefax" title="Fax" />
           </Group>
         </Column>
-        <Column>
-          <Group title="Billing Address">
-            <Reference foreignKey="PaymentCustomer_Customer" />
-            <Field source="PayerName2" title="Address" />
-            <Field source="PayerName3" title="" />
-            <ZipCity citySource="PayerPostalDistrict" zipSource="PayerZipCode" title="" />
-            <Field source="PayerAttention" title="Attn." />
-            <Field source="PayerCountry" title="Country" />
-          </Group>
-        </Column>
+        <Column />
       </Form>
     </UpperPane>
   </Layout>
