@@ -69,6 +69,7 @@
               </Style>
             </Calendar>
           </Group>
+          <Group title="By submitting your time, you are agreeing that you have accurately input all hours worked and coded all hours correctly." />
         </Column>
         <Column>
           <Row>
