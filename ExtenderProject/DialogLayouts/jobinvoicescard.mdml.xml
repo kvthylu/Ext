@@ -116,7 +116,14 @@
             <Field source="PayerTelefax" title="Fax" />
           </Group>
         </Column>
-        <Column />
+        <Group title="Billing Address" frame="false">
+          <Reference foreignKey="PaymentCustomer_Customer" keyMandatory="false" mandatory="false" />
+          <Field source="PayerName2" title="Address" />
+          <Field source="PayerName3" title="" />
+          <ZipCity citySource="PayerPostalDistrict" zipSource="PayerZipCode" title="" />
+          <Field source="PayerAttention" title="Attn." />
+          <Field source="PayerCountry" title="Country" />
+        </Group>
       </Form>
     </UpperPane>
   </Layout>

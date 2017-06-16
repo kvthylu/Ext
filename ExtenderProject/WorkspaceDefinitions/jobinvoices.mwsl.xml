@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MWSL xmlns="http://www.deltek.com/ns/mwsl" version="0.23">
+  <Workspace name="JobInvoices" title="Job Invoices">
+    <Define>
+      <Function name="enableLongTextEmulation" type="boolean" value="isEnvVarDefined('user.employeeinfo.CompanyNumber') and isEnvVarDefined('system.parameters.EnableLongTextEmulationInWorkspaces') and maconomy:booleanSysPar('EnableLongTextEmulationInWorkspaces', stringEnvVar('user.employeeinfo.CompanyNumber'))" />
+    </Define>
+    <Filter source="JobInvoiceOverview" title="Job Invoice List" view="JobInvoices" layout="JobInvoicesFilter" name="JobInvoiceOverview_Filter">
+      <Formation>
+        <Section title="Home">
+          <With>
+            <Card view="Overview" title="Overview" layout="JobInvoicesCard" name="JobInvoiceHomeOverview_Card">
+              <Expansions>
+                <Bind foreignKey="primary">
+                  <Table source="ShowJobInvoice" title="Draft Invoice" hidden="enableLongTextEmulation() or parent.DebitCredit = DebitCreditType'Credit" view="Demo" />
+                  <Table source="MaconomyLongText:ShowJobInvoice" layout="Maconomy:ShowJobInvoice" view="Demo" title="Draft Invoice" hidden="not enableLongTextEmulation() or parent.DebitCredit = DebitCreditType'Credit" />
+                </Bind>
+                <Bind foreignKey="primary">
+                  <Table source="ShowJobCreditMemo" title="Draft Invoice" hidden="enableLongTextEmulation() or parent.DebitCredit = DebitCreditType'Debit" view="Full" />
+                  <Table source="MaconomyLongText:ShowJobCreditMemo" layout="Maconomy:ShowJobCreditMemo" view="Demo" title="Draft Invoice" hidden="not enableLongTextEmulation() or parent.DebitCredit = DebitCreditType'Debit" />
+                </Bind>
+                <With>
+                  <Table layout="JobInvoicesTable" view="Demo" title="WIP Decisions" hidden="not parent.ContainsFoundationVar" />
+                </With>
+                <Bind foreignKey="primary">
+                  <Table source="ShowJobInvoiceReconciliations" view="Full" title="On Account Reconciliations" hidden="not parent.ReconcilesJobInvoicesOnAccountVar" />
+                </Bind>
+                <Restrict reversedForeignKey="InvoiceNumber_Invoice">
+                  <Filter source="ShowJobInvoiceOnAccountReconciliations" title="Reconciliations" view="Standard" hidden="not parent.ReconciliationsByInvoicesExistVar" />
+                </Restrict>
+              </Expansions>
+            </Card>
+          </With>
+          <Bind foreignKey="primary">
+            <Hidden source="ShowJobInvoice" />
+          </Bind>
+          <Bind foreignKey="primary">
+            <Hidden source="ShowJobCreditMemo" />
+          </Bind>
+        </Section>
+        <Section title="Crediting" hidden="not (parent.Origin = InvoiceOriginType'\Job Cost Invoice\ and parent.DebitCredit = DebitCreditType'Debit)">
+          <Bind foreignKey="primary">
+            <Card source="JobInvoiceCrediting" view="Crediting" title="Credit Invoice" layout="JobInvoicesCreditingCard" hidden="enableLongTextEmulation() or not (parent.Origin = InvoiceOriginType'\Job Cost Invoice\ and parent.DebitCredit = DebitCreditType'Debit)">
+              <Expansions>
+                <With>
+                  <Table view="Standard" title="Original Draft Invoice" layout="JobInvoicesCreditingTable" />
+                </With>
+                <Bind foreignKey="Card_InvoiceEditingHeader">
+                  <Hidden source="InvoiceEditing">
+                    <With>
+                      <Table view="Crediting" title="New Draft Invoice" hidden="parent.parent.InvoiceEditingNumberVar = ''" />
+                    </With>
+                  </Hidden>
+                </Bind>
+              </Expansions>
+            </Card>
+            <Card source="MaconomyLongText:JobInvoiceCrediting" layout="Maconomy:JobInvoicesCreditingCard" view="Crediting" title="Credit Invoice" hidden="not enableLongTextEmulation() or not (parent.Origin = InvoiceOriginType'\Job Cost Invoice\ and parent.DebitCredit = DebitCreditType'Debit)">
+              <Expansions>
+                <With>
+                  <Table layout="Maconomy:JobInvoicesCreditingTable" view="Standard" title="Original Draft Invoice" />
+                </With>
+                <Bind foreignKey="Card_InvoiceEditingHeader">
+                  <Hidden source="MaconomyLongText:InvoiceEditing">
+                    <With>
+                      <Table layout="MaconomyLongText:InvoiceEditing" view="Crediting" title="New Draft Invoice" hidden="parent.parent.InvoiceEditingNumberVar = ''" />
+                    </With>
+                  </Hidden>
+                </Bind>
+              </Expansions>
+            </Card>
+            <Card source="JobInvoiceCrediting" view="NewInvoice" title="New Invoice" layout="JobInvoicesCreditingNewInvoice" hidden="enableLongTextEmulation() or FullyCreditedInvoiceNumberVar = 0">
+              <Expansions>
+                <With>
+                  <Table view="Standard" title="Original Draft Invoice" layout="JobInvoicesCreditingTable" />
+                </With>
+              </Expansions>
+            </Card>
+            <Card source="MaconomyLongText:JobInvoiceCrediting" layout="Maconomy:JobInvoicesCreditingNewInvoice" view="NewInvoice" title="New Invoice" hidden="not enableLongTextEmulation() or FullyCreditedInvoiceNumberVar = 0">
+              <Expansions>
+                <With>
+                  <Table layout="Maconomy:JobInvoicesCreditingTable" view="Standard" title="Original Draft Invoice" />
+                </With>
+              </Expansions>
+            </Card>
+          </Bind>
+        </Section>
+      </Formation>
+    </Filter>
+  </Workspace>
+</MWSL>
